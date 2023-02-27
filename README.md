@@ -1,4 +1,4 @@
-# fyp
+# FYP
 
 A new Flutter project.
 
