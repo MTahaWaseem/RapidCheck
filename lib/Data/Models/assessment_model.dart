@@ -1,6 +1,6 @@
 //assessmentName, assessmentId, status, totalMarks, obtainedMarks
 
-class AssessmentJson {
+class AssessmentModel {
 
   final String assessmentName;
   final String assessmentId;
@@ -8,17 +8,17 @@ class AssessmentJson {
   final double  totalMarks;
   final double  obtainedMarks;
 
-  AssessmentJson({
-    required this.assessmentName,
-    required this.assessmentId,
-    required this.status,
-    required this.totalMarks,
-    required this.obtainedMarks,
+  AssessmentModel({
+    this.assessmentName = 'Test_Name',
+    this.assessmentId = 'Test_ID',
+    this.status = 'Active',
+    this.totalMarks = -1,
+    this.obtainedMarks = -1,
   });
 
-  static AssessmentJson fromJson(Map<String, dynamic> json) =>
+  static AssessmentModel fromJson(Map<String, dynamic> json) =>
 
-      AssessmentJson(
+      AssessmentModel(
         assessmentId: json['assessmentId'],
         assessmentName: json['assessmentName'],
         status: json['status'],

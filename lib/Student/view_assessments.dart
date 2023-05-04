@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
 
-class ClassAssessment extends StatefulWidget {
-  const ClassAssessment({Key? key}) : super(key: key);
+import '../Data/Models/assessment_model.dart';
+
+class ViewAssessments extends StatefulWidget {
+  const ViewAssessments({Key? key}) : super(key: key);
 
   @override
-  State<ClassAssessment> createState() => _ClassAssessmentState();
+  State<ViewAssessments> createState() => _ViewAssessmentsState();
 }
 
+// These declarations are for multiple colors in a single container
 final Color background = Colors.white;
 final Color fill = Color(0xFF6096B4);
-
+final double fillPercent = 20; // fills 56.23% for container from bottom
+final double fillStop = (100 - fillPercent) / 100;
+final List<double> stops = [0.0, fillStop, fillStop, 1.0];
 final List<Color> gradient = [
   background,
   background,
   fill,
   fill,
 ];
-final double fillPercent = 20; // fills 56.23% for container from bottom
-final double fillStop = (100 - fillPercent) / 100;
-final List<double> stops = [0.0, fillStop, fillStop, 1.0];
 
-class _ClassAssessmentState extends State<ClassAssessment> {
+
+class _ViewAssessmentsState extends State<ViewAssessments> {
+  // Setting initial value for Dropdown
   String dropdownValue = 'Active';
+
+//Testing ListBuilder
+  List<AssessmentModel> assess = [];
+
 
   @override
   Widget build(BuildContext context) {

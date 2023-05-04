@@ -3,7 +3,7 @@ import 'package:fyp/getAPI.dart';
 import 'package:fyp/test.dart';
 
 import 'Teacher/teacher_home.dart';
-import 'classAssessment.dart';
+import 'Student/view_assessments.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
 
-      home: ClassAssessment(), //const TeacherHome(),
+      home: ViewAssessments(), //const TeacherHome(),
     );
   }
 }
