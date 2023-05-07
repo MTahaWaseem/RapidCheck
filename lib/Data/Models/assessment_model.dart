@@ -9,11 +9,11 @@ class AssessmentModel {
   final double  obtainedMarks;
 
   AssessmentModel({
-    this.assessmentName = 'Test_Name',
+    this.assessmentName = 'Quiz 01',
     this.assessmentId = 'Test_ID',
     this.status = 'Active',
-    this.totalMarks = -1,
-    this.obtainedMarks = -1,
+    this.totalMarks = 15,
+    this.obtainedMarks = 13,
   });
 
   static AssessmentModel fromJson(Map<String, dynamic> json) =>
