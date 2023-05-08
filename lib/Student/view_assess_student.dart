@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../Data/Models/assessment_model.dart';
 
-class ViewAssessments extends StatefulWidget {
-  const ViewAssessments({Key? key}) : super(key: key);
+class ViewAssessStudent extends StatefulWidget {
+  const ViewAssessStudent({Key? key}) : super(key: key);
 
   @override
-  State<ViewAssessments> createState() => _ViewAssessmentsState();
+  State<ViewAssessStudent> createState() => _ViewAssessStudentState();
 }
 
 // For DropDown Container
@@ -60,33 +60,20 @@ final List<Color> cancelled = [
   fill5,
 ];
 
-class _ViewAssessmentsState extends State<ViewAssessments> {
+class _ViewAssessStudentState extends State<ViewAssessStudent> {
   // Setting initial value for Dropdown
   String dropdownValue = 'Active';
 
 //Testing ListBuilder
-  List<AssessmentModel> assess = [];
+  List<AnnouncementModel> assess = [];
 
   @override
   void initState() {
     super.initState();
-    AssessmentModel result = new AssessmentModel();
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-    assess.add(result);
-
+    AnnouncementModel result = new AnnouncementModel();
     print(assess.length);
+    assess.add(result);
+    assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);
   }
 
   @override
@@ -104,19 +91,7 @@ class _ViewAssessmentsState extends State<ViewAssessments> {
       ),
       body: Stack(
         children: [
-          Column(
-            children: [
-              Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  color: Color(0xFFD2721A)),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
+          BackgroundScreen(),
           Positioned(
             top: h / 128,
             left: w / 32,
@@ -133,28 +108,8 @@ class _ViewAssessmentsState extends State<ViewAssessments> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(w / 16, 0, 0, 0),
-                    child: Text(
-                      'Physics Evening',
-                      style: TextStyle(
-                        color: Color(0xFF737373),
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(w / 16, h / 128, 0, h / 32),
-                    child: Text(
-                      'PHY-9055',
-                      style: TextStyle(
-                        color: Color(0xFF6096B4),
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  MainText(w, "Physics Evening"),
+                  SubText(w, h, "PHY-9055"),
                   Stack(
                     children: [
                       Container(
@@ -167,7 +122,7 @@ class _ViewAssessmentsState extends State<ViewAssessments> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Class Assignments',
+                                'Class Assessments',
                                 style: TextStyle(
                                   color: Color(0xFF737373),
                                   fontSize: 18.0,
@@ -177,65 +132,7 @@ class _ViewAssessmentsState extends State<ViewAssessments> {
                               SizedBox(
                                 height: 15,
                               ),
-                              Material(
-                                elevation: 3,
-                                shadowColor: Colors.grey,
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: gradient,
-                                        stops: stops,
-                                        end: Alignment.centerRight,
-                                        begin: Alignment.centerLeft,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: DropdownButton<String>(
-                                    value: dropdownValue,
-                                    icon: Padding(
-                                        padding: EdgeInsets.only(right: w / 20),
-                                        child:
-                                            Icon(Icons.arrow_downward_rounded)),
-                                    iconEnabledColor: Colors.white,
-                                    isExpanded: true,
-                                    iconSize: 24,
-                                    elevation: 16,
-                                    style: TextStyle(color: Colors.deepPurple),
-                                    underline: Container(),
-                                    onChanged: (String? newValue) {
-                                      if (newValue != null) {
-                                        setState(() {
-                                          dropdownValue = newValue;
-                                        });
-                                      }
-                                    },
-                                    items: <String>[
-                                      'Active',
-                                      'Ungraded',
-                                      'Graded',
-                                      'Cancelled'
-                                    ].map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 30),
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(
-                                              color: Color(0xFF737373),
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
+                              Dropdown(w),
                               SizedBox(
                                 height: 20,
                               ),
@@ -393,7 +290,121 @@ class _ViewAssessmentsState extends State<ViewAssessments> {
     );
   }
 
-  List<AssessmentModel> get _filteredAssessments {
+  Material Dropdown(double w,) {
+    return Material(
+                              elevation: 3,
+                              shadowColor: Colors.grey,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: gradient,
+                                      stops: stops,
+                                      end: Alignment.centerRight,
+                                      begin: Alignment.centerLeft,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10))),
+                                child: DropdownButton<String>(
+                                  value: dropdownValue,
+                                  icon: Padding(
+                                      padding: EdgeInsets.only(right: w / 20),
+                                      child:
+                                          Icon(Icons.arrow_downward_rounded)),
+                                  iconEnabledColor: Colors.white,
+                                  isExpanded: true,
+                                  iconSize: 24,
+                                  elevation: 16,
+                                  style: TextStyle(color: Colors.deepPurple),
+                                  underline: Container(),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        dropdownValue = newValue;
+                                      });
+                                    }
+                                  },
+                                  items: <String>[
+                                    'Active',
+                                    'Inactive',
+                                    'Graded',
+                                    'Ungraded',
+                                    'Expired',
+                                    'Regrade Requested'
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 30),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: Color(0xFF737373),
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+  }
+
+  Padding SubText(double w, double h, String text) {
+    return Padding(
+                  padding: EdgeInsets.fromLTRB(w / 16, h / 128, 0, h / 32),
+                  child: Text(text,
+                    style: TextStyle(
+                      color: Color(0xFF6096B4),
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+  }
+
+  Padding MainText(double w, String text) {
+    return Padding(
+                  padding: EdgeInsets.fromLTRB(w / 16, 0, 0, 0),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: Color(0xFF737373),
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+  }
+
+  List<AnnouncementModel> get _filteredAssessments {
     return assess.where((item) => item.status == dropdownValue).toList();
+  }
+}
+
+class BackgroundScreen extends StatelessWidget {
+  const BackgroundScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+            height: MediaQuery.of(context).size.height / 3,
+            color: Color(0xFFD2721A)),
+        Expanded(
+          flex: 1,
+          child: Container(
+            color: Colors.black,
+          ),
+        ),
+      ],
+    );
   }
 }

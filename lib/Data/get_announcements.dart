@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'Models/assessment_model.dart';
 
-Future<AnnouncementModel> getAssessments(context) async {
+Future<AnnouncementModel> getAnnouncement(context) async {
 
   AnnouncementModel result;
 

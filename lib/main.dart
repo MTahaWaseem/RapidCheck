@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/getAPI.dart';
-import 'package:fyp/test.dart';
-
-import 'Teacher/teacher_home.dart';
-import 'Student/view_assessments.dart';
+import 'Teacher/view_courses.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +8,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
 
@@ -22,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
 
-      home: ViewAssessments(), //const TeacherHome(),
+      home: ViewCourses(), //const TeacherHome(),
     );
   }
 }
