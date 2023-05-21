@@ -4,7 +4,7 @@ import '../Data/get_assessments.dart';
 
 class ViewAssessmentsProvider with ChangeNotifier {
 
-  AnnouncementModel assessment = AnnouncementModel();
+  AssessmentModel assessment = AssessmentModel();
   bool loading = false;
 
   getPostData(context) async {

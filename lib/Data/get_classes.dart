@@ -4,23 +4,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'Models/assessment_model.dart';
+import '../config.dart';
 import 'Models/class_model.dart';
 
 Future<ClassModel> getClasses(context) async {
 
-  ClassModel result;
+  ClassModel result = ClassModel();
 
   try {
-    final response = await http.post(
-      Uri.parse("http://localhost:3018/api/users/login",),
+    final response = await http.get(
+      Uri.parse("${URL}/classes"),
 
-      body: {	"usernameOrEmail": "teacher@mailinator.com",
-        "password": "password123",
-        "role": "TEACHER"},
-      headers: {
-        HttpHeaders.contentTypeHeader: "application/json",
-      },
+      // headers: {
+      //   HttpHeaders.contentTypeHeader: "application/json",
+      // },
 
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -28,7 +25,7 @@ Future<ClassModel> getClasses(context) async {
       result = ClassModel.fromJson(item);
     } else {
       Fluttertoast.showToast(
-          msg: "Data not found",
+          msg: "Error Fetching Classes",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -40,8 +37,6 @@ Future<ClassModel> getClasses(context) async {
   } catch (e) {
     log("Catched! ", error: e);
   }
-
-  result = new ClassModel();
 
   return result;
 }

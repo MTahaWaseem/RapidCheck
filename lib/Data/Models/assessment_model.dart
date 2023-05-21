@@ -1,6 +1,6 @@
 //assessmentName, assessmentId, status, totalMarks, obtainedMarks
 
-class AnnouncementModel {
+class AssessmentModel {
 
   final String assessmentName;
   final String assessmentId;
@@ -8,7 +8,7 @@ class AnnouncementModel {
   final double  totalMarks;
   final double  obtainedMarks;
 
-  AnnouncementModel({
+  AssessmentModel({
     this.assessmentName = 'Test_name',
     this.assessmentId = 'Test_ID',
     this.status = 'Active',
@@ -17,9 +17,9 @@ class AnnouncementModel {
 
   });
 
-  static AnnouncementModel fromJson(Map<String, dynamic> json) =>
+  static AssessmentModel fromJson(Map<String, dynamic> json) =>
 
-      AnnouncementModel(
+      AssessmentModel(
         assessmentId: json['assessmentId'],
         assessmentName: json['assessmentName'],
         status: json['status'],

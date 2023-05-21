@@ -6,9 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'Models/assessment_model.dart';
 
-Future<AnnouncementModel> getAnnouncement(context) async {
+Future<AssessmentModel> getAnnouncement(context) async {
 
-  AnnouncementModel result;
+  AssessmentModel result;
 
   try {
     final response = await http.post(
@@ -24,7 +24,7 @@ Future<AnnouncementModel> getAnnouncement(context) async {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
-      result = AnnouncementModel.fromJson(item);
+      result = AssessmentModel.fromJson(item);
     } else {
       Fluttertoast.showToast(
           msg: "Data not found",
@@ -40,7 +40,7 @@ Future<AnnouncementModel> getAnnouncement(context) async {
     log("Catched! ", error: e);
   }
 
-  result = new AnnouncementModel();
+  result = new AssessmentModel();
 
   return result;
 }

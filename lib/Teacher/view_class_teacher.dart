@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:fyp/Teacher/grade_assess.dart';
 import 'package:fyp/Teacher/post_announcement.dart';
+import 'package:fyp/Teacher/regrade_requests.dart';
 import 'package:fyp/Teacher/view_assess_teacher.dart';
 import 'package:fyp/Teacher/view_students.dart';
 import '../Data/Models/class_model.dart';
 
-class ViewClass extends StatefulWidget {
-  const ViewClass({Key? key}) : super(key: key);
+class ViewClassTeacher extends StatefulWidget {
+  const ViewClassTeacher({Key? key}) : super(key: key);
 
   @override
-  State<ViewClass> createState() => _ViewClassState();
+  State<ViewClassTeacher> createState() => _ViewClassTeacherState();
 }
-String className = ''; //
-
-
-class _ViewClassState extends State<ViewClass> {
-//Testing ListBuilder
-  List<ClassModel> classes = [];
+class _ViewClassTeacherState extends State<ViewClassTeacher> {
+List<ClassModel> classes = [];
 
   @override
   void initState() {
+
     super.initState();
     ClassModel result = new ClassModel();
     print(classes.length);
@@ -52,10 +51,12 @@ class _ViewClassState extends State<ViewClass> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -10,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
               ),
               elevation: 5.0,
               child: Column(
@@ -95,9 +96,10 @@ class _ViewClassState extends State<ViewClass> {
                                         splashColor: Colors.blueGrey, // Splash color
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) => PostAnnouncement(
-                                                // Some parameter here?
-                                              )),
+                                              builder: (context) => RegradeRequests(
+
+                                              )
+                                          ),
                                         ),
                                         child: Container(
                                           width: 130,
@@ -238,15 +240,54 @@ class _ViewClassState extends State<ViewClass> {
                                 ),
                               ],
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Material(
+                                elevation: 3,
+                                shadowColor: Colors.grey,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    //color: Color(0xFF6096B4),
+                                      color: Color(0xFF6096B4),
+                                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                    splashColor: Colors.blueGrey, // Splash color
+                                    onTap: () => Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => GradeAssess(
+
+                                          )
+                                      ),
+                                    ),
+                                    child: Container(
+                                      width: w * 0.87,
+                                      height: 90,
+                                      child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text("Grade Unchecked Assessments",
+                                              style: TextStyle(color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15
+                                              ),),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                             Align(
                               alignment: Alignment.topLeft,
                               child: Padding(
-                                padding: const EdgeInsets.all(32.0),
+                                padding: const EdgeInsets.only(left:32.0, top: 30),
                                 child: Text(
-                                      "Updates",
+                                      "Recent Announcements",
                                       style: TextStyle(
                                         color: Color(0xFF737373),
-                                        fontSize: 20.0,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -262,10 +303,10 @@ class _ViewClassState extends State<ViewClass> {
             ),
           ),
           Positioned(
-            top: 390,
+            top: h * 0.575,
             left: w / 8,
             right: w / 8,
-            bottom: 70,
+            bottom: 0,
             child: ListView.builder(
                 itemCount: classes.length,
                 itemBuilder: (context, index) {
@@ -359,7 +400,7 @@ class BackgroundScreen extends StatelessWidget {
     return Column(
       children: [
         Container(
-            height: MediaQuery.of(context).size.height / 3,
+            height: MediaQuery.of(context).size.height * 0.33,
             color: Color(0xFFD2721A)),
         Expanded(
           flex: 1,

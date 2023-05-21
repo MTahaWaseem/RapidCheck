@@ -66,12 +66,12 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
   String dropdownValue = 'Active';
 
 //Testing ListBuilder
-  List<AnnouncementModel> assess = [];
+  List<AssessmentModel> assess = [];
 
   @override
   void initState() {
     super.initState();
-    AnnouncementModel result = new AnnouncementModel();
+    AssessmentModel result = new AssessmentModel();
     print(assess.length);
     assess.add(result);
     assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);
@@ -82,11 +82,13 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(30),
+        preferredSize: Size.fromHeight(35),
         child: AppBar(
+          leading: BackButton(color: Colors.black),
           shape: Border(bottom: BorderSide(color: Colors.black, width: 1)),
-          title: Text('Salam'),
+          //title: Text('Salam'),
           backgroundColor: Color(0xFFD2721A),
         ),
       ),
@@ -97,10 +99,12 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -10,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
               ),
               elevation: 5.0,
               child: Column(
@@ -195,10 +199,10 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
             ),
           ),
           Positioned(
-            top: 350,
+            top: h * 0.415,
             left: w / 8,
             right: w / 8,
-            bottom: h / 11,
+            bottom: 0,
             child: ListView.builder(
                 itemCount: _filteredAssessments.length,
                 itemBuilder: (context, index) {
@@ -375,10 +379,7 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
           items: <String>[
             'Active',
             'Inactive',
-            'Graded',
-            'Ungraded',
             'Expired',
-            'Regrade Requested'
           ].map<DropdownMenuItem<String>>(
                   (String value) {
                 return DropdownMenuItem<String>(
@@ -429,7 +430,7 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
     );
   }
 
-  List<AnnouncementModel> get _filteredAssessments {
+  List<AssessmentModel> get _filteredAssessments {
     return assess.where((item) => item.status == dropdownValue).toList();
   }
 }

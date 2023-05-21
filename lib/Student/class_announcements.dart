@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fyp/Teacher/post_announcement.dart';
 import '../Data/Models/class_model.dart';
 
-class PostAnnouncement extends StatefulWidget {
-  const PostAnnouncement({Key? key}) : super(key: key);
+class ClassAnnouncements extends StatefulWidget {
+  const ClassAnnouncements({Key? key}) : super(key: key);
 
   @override
-  State<PostAnnouncement> createState() => _PostAnnouncementState();
+  State<ClassAnnouncements> createState() => _ClassAnnouncementsState();
 }
 
-class _PostAnnouncementState extends State<PostAnnouncement> {
+class _ClassAnnouncementsState extends State<ClassAnnouncements> {
 //Testing ListBuilder
   List<ClassModel> classes = [];
   String dropdownValue = 'Active';
@@ -49,10 +49,12 @@ class _PostAnnouncementState extends State<PostAnnouncement> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -10,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
               ),
               elevation: 5.0,
               child: Column(
@@ -94,10 +96,10 @@ class _PostAnnouncementState extends State<PostAnnouncement> {
             ),
           ),
           Positioned(
-            top: 290,
+            top: h * 0.25,
             left: w / 8,
             right: w / 8,
-            bottom: 70,
+            bottom: 0,
             child: ListView.builder(
                 itemCount: classes.length,
                 itemBuilder: (context, index) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../Data/Models/assessment_model.dart';
 
 class ViewAssessStudent extends StatefulWidget {
@@ -39,12 +38,14 @@ final List<Color> active = [
   fill2,
 ];
 
+
 final List<Color> ungraded = [
   background2,
   background2,
   fill3,
   fill3,
 ];
+
 
 final List<Color> graded = [
   background2,
@@ -65,12 +66,12 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
   String dropdownValue = 'Active';
 
 //Testing ListBuilder
-  List<AnnouncementModel> assess = [];
+  List<AssessmentModel> assess = [];
 
   @override
   void initState() {
     super.initState();
-    AnnouncementModel result = new AnnouncementModel();
+    AssessmentModel result = new AssessmentModel();
     print(assess.length);
     assess.add(result);
     assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);
@@ -81,12 +82,15 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(30),
+        preferredSize: const Size.fromHeight(35),
         child: AppBar(
-          shape: Border(bottom: BorderSide(color: Colors.black, width: 1)),
-          title: Text('Salam'),
-          backgroundColor: Color(0xFFD2721A),
+          leading: const BackButton(color: Colors.black),
+          shape:
+          const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+          //title: Text('Salam'),
+          backgroundColor: const Color(0xFFD2721A),
         ),
       ),
       body: Stack(
@@ -96,10 +100,12 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -10,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
               ),
               elevation: 5.0,
               child: Column(
@@ -147,10 +153,10 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
             ),
           ),
           Positioned(
-            top: 265,
+            top: h * 0.32,
             left: w / 8,
             right: w / 8,
-            bottom: h / 11,
+            bottom: 0,
             child: ListView.builder(
                 itemCount: _filteredAssessments.length,
                 itemBuilder: (context, index) {
@@ -381,7 +387,7 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                 );
   }
 
-  List<AnnouncementModel> get _filteredAssessments {
+  List<AssessmentModel> get _filteredAssessments {
     return assess.where((item) => item.status == dropdownValue).toList();
   }
 }

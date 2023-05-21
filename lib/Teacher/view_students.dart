@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Teacher/view_class.dart';
+import 'package:fyp/Teacher/view_class_teacher.dart';
+import 'package:fyp/Teacher/view_one_student.dart';
 import '../Data/Models/class_model.dart';
 
 class ViewStudents extends StatefulWidget {
@@ -62,10 +63,12 @@ class _ViewStudentsState extends State<ViewStudents> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -10,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
               ),
               elevation: 5.0,
               child: Column(
@@ -187,7 +190,7 @@ class _ViewStudentsState extends State<ViewStudents> {
             top: 215,
             left: w / 8,
             right: w / 8,
-            bottom: h / 11,
+            bottom: 0,
             child: ListView.builder(
                 itemCount: classes.length,
                 itemBuilder: (context, index) {
@@ -213,7 +216,7 @@ class _ViewStudentsState extends State<ViewStudents> {
                             splashColor: Colors.blueGrey, // Splash color
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => ViewClass(
+                                  builder: (context) => ViewOneStudent(
                                     // Tell Class ID Here
 
                                   )),

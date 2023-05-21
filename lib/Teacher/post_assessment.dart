@@ -65,7 +65,7 @@ class _PostAssessmentState extends State<PostAssessment> {
             top: h / 128,
             left: w / 32,
             right: w / 32,
-            bottom: h / 16,
+            bottom: -30,
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
@@ -144,7 +144,7 @@ class _PostAssessmentState extends State<PostAssessment> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 340),
+                            SizedBox(height:h*0.43),
                             Material(
                               elevation: 3,
                               shadowColor: Colors.grey,
@@ -182,7 +182,6 @@ class _PostAssessmentState extends State<PostAssessment> {
                               ),
                             ),
                           ],
-
                         ),
                       ),
                     ],
@@ -192,10 +191,10 @@ class _PostAssessmentState extends State<PostAssessment> {
             ),
           ),
           Positioned(
-            top: 280,
+            top: h * 0.33,
             left: w / 8,
             right: w / 8,
-            bottom: 170,
+            bottom: h * 0.1,
             child: ListView.builder(
                 itemCount: classes.length,
                 itemBuilder: (context, index) {
@@ -279,69 +278,7 @@ class _PostAssessmentState extends State<PostAssessment> {
     );
   }
 
-  Material Dropdown(double w,) {
-    return Material(
-      elevation: 3,
-      shadowColor: Colors.grey,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradient,
-              stops: stops,
-              end: Alignment.centerRight,
-              begin: Alignment.centerLeft,
-            ),
-            borderRadius: BorderRadius.all(
-                Radius.circular(10))),
-        child: DropdownButton<String>(
-          value: dropdownValue,
-          icon: Padding(
-              padding: EdgeInsets.only(right: w / 20),
-              child:
-              Icon(Icons.arrow_downward_rounded)),
-          iconEnabledColor: Colors.white,
-          isExpanded: true,
-          iconSize: 24,
-          elevation: 16,
-          style: TextStyle(color: Colors.deepPurple),
-          underline: Container(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              setState(() {
-                dropdownValue = newValue;
-              });
-            }
-          },
-          items: <String>[
-            'Active',
-            'Inactive',
-            'Graded',
-            'Ungraded',
-            'Expired',
-            'Regrade Requested'
-          ].map<DropdownMenuItem<String>>(
-                  (String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Padding(
-                    padding:
-                    const EdgeInsets.only(left: 30),
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        color: Color(0xFF737373),
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-        ),
-      ),
-    );
-  }
+
 }
 
 
