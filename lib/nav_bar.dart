@@ -19,23 +19,43 @@ class Navbar extends StatefulWidget {
 
 class _NavbarState extends State<Navbar> {
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    const ViewClassesTeacher(),
+  static final List<Widget> _widgetOptionsTeacher = <Widget>[
+     const ViewClassesTeacher(),
     TakeAssessment(),
     const Notifications(),
     ProfileScreen(),
   ];
 
+  static final List<Widget> _widgetOptionsStudent = <Widget>[
+    //const ViewClassesStudent(),
+    // Settings
+    const Notifications(),
+    ProfileScreen(),
+  ];
+
+  bool isTeacher = false;
+  bool isLoading = true;
+
+  void checkRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isTeacher = prefs.getBool('isTeacher') ?? true;
+    });
+    print("In check role: " + isTeacher.toString());
+    isLoading = false;
+  }
 
   @override
   void initState() {
     super.initState();
-    //context.read<MainScreenProvider>().getUserDetails(user.uid);
+      checkRole();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
+
+    return isLoading ? CircularProgressIndicator() :
+      CupertinoTabScaffold(
         tabBar: CupertinoTabBar(
           backgroundColor: const Color(0XFFD2721A),
           height: 60,
@@ -75,23 +95,23 @@ class _NavbarState extends State<Navbar> {
           switch(index){
             case 0:
               return CupertinoTabView(builder: (context){
-                return CupertinoPageScaffold(child: _widgetOptions[0]);
+                return CupertinoPageScaffold(child: isTeacher ? _widgetOptionsTeacher[0] : _widgetOptionsStudent[0] );
               });
             case 1:
               return CupertinoTabView(builder: (context){
-                return CupertinoPageScaffold(child: _widgetOptions[1]);
+                return CupertinoPageScaffold(child: isTeacher ? _widgetOptionsTeacher[1] : _widgetOptionsStudent[1] );
               });
             case 2:
               return CupertinoTabView(builder: (context){
-                return CupertinoPageScaffold(child: _widgetOptions[2]);
+                return CupertinoPageScaffold(child: isTeacher ? _widgetOptionsTeacher[2] : _widgetOptionsStudent[2] );
               });
             case 3:
               return CupertinoTabView(builder: (context){
-                return CupertinoPageScaffold(child: _widgetOptions[3]);
+                return CupertinoPageScaffold(child: isTeacher ? _widgetOptionsTeacher[3] : _widgetOptionsStudent[3] );
               });
             default:
               return CupertinoTabView(builder: (context){
-                return CupertinoPageScaffold(child: _widgetOptions[0]);
+                return CupertinoPageScaffold(child: isTeacher ? _widgetOptionsTeacher[0] : _widgetOptionsStudent[0] );
               });
           }
         }

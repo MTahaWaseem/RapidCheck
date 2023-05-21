@@ -18,6 +18,7 @@ class ClassModel {
 }
 
 class Class {
+
   String createdAt;
   String id;
   String courseCode;

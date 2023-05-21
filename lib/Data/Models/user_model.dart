@@ -30,6 +30,7 @@ class User {
   DateTime createdAt;
   DateTime? deletedAt;
   int v;
+  String role;
 
   User({
     required this.id,
@@ -40,6 +41,7 @@ class User {
     required this.createdAt,
     required this.deletedAt,
     required this.v,
+    required this.role,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,8 @@ class User {
       createdAt: DateTime.parse(json['createdAt']),
       deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
       v: json['__v'],
+      role: json['role'],
+
     );
   }
 
@@ -65,6 +69,7 @@ class User {
       createdAt: DateTime.now(),
       deletedAt: null,
       v: 0,
+      role: ''
     );
   }
 }

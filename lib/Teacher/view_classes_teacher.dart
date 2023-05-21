@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:fyp/Controllers/login_provider.dart';
 import 'package:fyp/Teacher/view_class_teacher.dart';
 import 'package:provider/provider.dart';
+import '../Controllers/view_classes_teacher_provider.dart';
 import '../Data/Models/class_model.dart';
 
 class ViewClassesTeacher extends StatefulWidget {
@@ -40,393 +41,435 @@ final List<Color> active = [
 ];
 
 class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
+  // Add a GlobalKey to control the refresh indicator
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
   String className = "";
   String dropdownValue = 'PHY-064';
-  List<ClassModel> classes = [];
+  List<Class> classes = [];
 
 
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
 
+  Future<void> _handleRefresh() async {
+    // Call the method when the user triggers the refresh action
+    await loadData();
+  }
 
+  Future<void> loadData() async {
+    final myProvider = Provider.of<ViewClassesTeacherProvider>(context, listen: false);
+    await myProvider.getPostData(context);
 
+    // Store the values from the provider in the list
+    setState(() {
+      classes = List<Class>.from(myProvider.classes.classes);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
 
+    final myProvider = Provider.of<ViewClassesTeacherProvider>(context);
     final user = Provider.of<LoginProvider>(context).user.user;
+    //final classes = Provider.of<ViewClassesTeacherProvider>(context).classes.classes;
 
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(35),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Color(0xFFD2721A),
-        ),
-      ),
-      body: Stack(
-        children: [
-          BackgroundScreen(),
-          Positioned(
-            top: h / 128,
-            left: w / 32,
-            right: w / 32,
-            bottom: -10,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-              ),
-              //elevation: 5.0,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: h / 25,
-                    ),
-                    MainText(w, "Welcome ${user.firstName}!"),
-                    SizedBox(height: 10),
-                    SizedBox(height: 15),
-                    Stack(
-                      children: [
-                        Container(
-                            height: classes.length == 0
-                                ? 100
-                                : classes.length < 3
-                                    ? 400
-                                    : 600,
-                            color: Color(0xFFF4F4F4)),
-                        Positioned(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(20, 22, 20, 0),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 20),
-                                Text(
-                                  "My Classes",
-                                  style: TextStyle(
-                                    color: Color(0xFF737373),
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(width: 32),
-                                SizedBox(
-                                  width: 135,
-                                  child: ElevatedButton(
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.add),
-                                        SizedBox(width: 20),
-                                        Text(
-                                          'Class',
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Color(0xFF6096B4),
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) => AlertDialog(
-                                          title: SingleChildScrollView(
-                                            scrollDirection: Axis.vertical,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Select Course Code",
-                                                  style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontSize:
-                                                          17 // Set the desired grey color
-                                                      ),
-                                                ),
-                                                SizedBox(height: 15),
-                                                Material(
-                                                  elevation: 3,
-                                                  shadowColor: Colors.grey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        gradient:
-                                                            LinearGradient(
-                                                          colors: gradient,
-                                                          stops: stops,
-                                                          end: Alignment
-                                                              .centerRight,
-                                                          begin: Alignment
-                                                              .centerLeft,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    10))),
-                                                    child: StatefulBuilder(
-                                                        builder: (BuildContext
-                                                                context,
-                                                            StateSetter
-                                                                dropDownState) {
-                                                      return DropdownButton<
-                                                              String>(
-                                                          value: dropdownValue,
-                                                          icon: Padding(
-                                                              padding:
-                                                                  EdgeInsets.only(
-                                                                      right: w * 0.035),
-                                                              child: Icon(Icons
-                                                                  .arrow_downward_rounded)),
-                                                          iconEnabledColor:
-                                                              Colors.white,
-                                                          isExpanded: true,
-                                                          iconSize: 24,
-                                                          elevation: 16,
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .deepPurple),
-                                                          underline:
-                                                              Container(),
-                                                          onChanged: (String? value) {
-                                                            dropDownState(() {
-                                                              dropdownValue = value!;
-                                                            });
-                                                          },
-                                                          items: <String>[
-                                                            'PHY-064',
-                                                            'Chem-023'
-                                                          ].map<
-                                                                  DropdownMenuItem<
-                                                                      String>>(
-                                                              (String value) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: value,
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        left:
-                                                                            30),
-                                                                child: Text(
-                                                                  value,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Color(
-                                                                        0xFF737373),
-                                                                    fontSize:
-                                                                        15.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList());
-                                                    }),
-                                                  ),
-                                                ),
-                                                TextField(
-                                                  decoration: InputDecoration(
-                                                    labelText:
-                                                        'Enter Class Name',
-                                                  ),
-                                                  onChanged: (value) {
-                                                    className = value; // update the class name as the user types
-                                                  },
-                                                  //decoration: InputDecoration(hintText: 'Enter Course Name'),
-                                                ),
-                                                TextField(
-                                                  decoration: InputDecoration(
-                                                    labelText:
-                                                        'Enter Class Description',
-                                                  ),
-                                                  onChanged: (value) {
-                                                    className =
-                                                        value; // update the class name as the user types
-                                                  }
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                ClassModel result =
-                                                    new ClassModel();
-                                                classes.add(result);
-                                                setState(() {});
-                                                // Method Call to add course name
-                                                Navigator.of(ctx).pop();
-                                              },
-                                              child: Container(
-                                                width: 100,
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xFF6096B4),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10)),
-                                                ),
-                                                //color: Color(0xFF6096B4),
-                                                padding:
-                                                    const EdgeInsets.all(14),
-                                                child: Align(
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    "Add",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 15.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+    return RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: _handleRefresh,
+      notificationPredicate: (ScrollNotification notification) {
+        return notification.depth == 0;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(35),
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: Color(0xFFD2721A),
           ),
-          Positioned(
-            top: 215,
-            left: w / 8,
-            right: w / 8,
-            bottom: 0,
-            child: classes.length > 0
-                ? ListView.builder(
-                    itemCount: classes.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        body: myProvider.loading
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+        : Stack(
+          children: [
+            BackgroundScreen(),
+            Positioned(
+              top: h / 128,
+              left: w / 32,
+              right: w / 32,
+              bottom: -10,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                ),
+                //elevation: 5.0,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: h / 25,
+                      ),
+                      MainText(w, "Welcome ${user.firstName}!"),
+                      SizedBox(height: 10),
+                      SizedBox(height: 15),
+                      Stack(
                         children: [
-                          Material(
-                            elevation: 5,
-                            shadowColor: Colors.grey,
-                            borderRadius: BorderRadius.circular(20),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: active,
-                                    stops: stops2,
-                                    end: Alignment.centerRight,
-                                    begin: Alignment.centerLeft,
+                          Container(
+                              height: classes.isEmpty
+                                  ? 100
+                                  : classes.length < 3
+                                      ? 400
+                                      : 600,
+                              color: Color(0xFFF4F4F4)),
+                          Positioned(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(20, 22, 20, 0),
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    "My Classes",
+                                    style: TextStyle(
+                                      color: Color(0xFF737373),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              child: InkWell(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                splashColor: Colors.blueGrey, // Splash color
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => ViewClassTeacher(
-                                          // Tell Class ID Here
-
-                                          )),
-                                ),
-                                child: Container(
-                                  height: 80,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: 13),
-                                      Row(
+                                  SizedBox(width: 32),
+                                  SizedBox(
+                                    width: 135,
+                                    child: ElevatedButton(
+                                      child: Row(
                                         children: [
-                                          SizedBox(width: 28),
+                                          Icon(Icons.add),
+                                          SizedBox(width: 20),
                                           Text(
-                                            'PHY',
+                                            'Class',
                                             style: TextStyle(
-                                              color: Color(0xFF6096B4),
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 50.0),
-                                            child: Text("Salam",
-                                              //classes[index].className,
+                                        ],
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Color(0xFF6096B4),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: SingleChildScrollView(
+                                              scrollDirection: Axis.vertical,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Select Course Code",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey,
+                                                        fontSize:
+                                                            17 // Set the desired grey color
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 15),
+                                                  Material(
+                                                    elevation: 3,
+                                                    shadowColor: Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          gradient:
+                                                              LinearGradient(
+                                                            colors: gradient,
+                                                            stops: stops,
+                                                            end: Alignment
+                                                                .centerRight,
+                                                            begin: Alignment
+                                                                .centerLeft,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      10))),
+                                                      child: StatefulBuilder(
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              StateSetter
+                                                                  dropDownState) {
+                                                        return DropdownButton<
+                                                                String>(
+                                                            value: dropdownValue,
+                                                            icon: Padding(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                        right: w * 0.035),
+                                                                child: Icon(Icons
+                                                                    .arrow_downward_rounded)),
+                                                            iconEnabledColor:
+                                                                Colors.white,
+                                                            isExpanded: true,
+                                                            iconSize: 24,
+                                                            elevation: 16,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .deepPurple),
+                                                            underline:
+                                                                Container(),
+                                                            onChanged: (String? value) {
+                                                              dropDownState(() {
+                                                                dropdownValue = value!;
+                                                              });
+                                                            },
+                                                            items: <String>[
+                                                              'PHY-064',
+                                                              'Chem-023'
+                                                            ].map<
+                                                                    DropdownMenuItem<
+                                                                        String>>(
+                                                                (String value) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: value,
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .only(
+                                                                          left:
+                                                                              30),
+                                                                  child: Text(
+                                                                    value,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xFF737373),
+                                                                      fontSize:
+                                                                          15.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList());
+                                                      }),
+                                                    ),
+                                                  ),
+                                                  TextField(
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          'Enter Class Name',
+                                                    ),
+                                                    onChanged: (value) {
+                                                      className = value; // update the class name as the user types
+                                                    },
+                                                    //decoration: InputDecoration(hintText: 'Enter Course Name'),
+                                                  ),
+                                                  TextField(
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          'Enter Class Description',
+                                                    ),
+                                                    onChanged: (value) {
+                                                      className =
+                                                          value; // update the class name as the user types
+                                                    }
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  // ClassModel result =
+                                                  //     new ClassModel();
+                                                  // classes.add(result);
+                                                  // setState(() {});
+                                                  // Method Call to add course name
+                                                  Navigator.of(ctx).pop();
+                                                },
+                                                child: Container(
+                                                  width: 100,
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFF6096B4),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(10)),
+                                                  ),
+                                                  //color: Color(0xFF6096B4),
+                                                  padding:
+                                                      const EdgeInsets.all(14),
+                                                  child: Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      "Add",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 215,
+              left: w / 8,
+              right: w / 8,
+              bottom: 0,
+              child: classes.length > 0
+                  ? ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: classes.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Material(
+                              elevation: 5,
+                              shadowColor: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: active,
+                                      stops: stops2,
+                                      end: Alignment.centerRight,
+                                      begin: Alignment.centerLeft,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                child: InkWell(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  splashColor: Colors.blueGrey, // Splash color
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => ViewClassTeacher(
+                                            // Tell Class ID Here
+
+                                            )),
+                                  ),
+                                  child: Container(
+                                    height: 80,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 13),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 28),
+                                            Text(
+                                              'PHY',
                                               style: TextStyle(
                                                 color: Color(0xFF6096B4),
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 16),
-                                      Row(
-                                        children: [
-                                          SizedBox(width: 25),
-                                          Text(
-                                            '9055',
-                                            style: TextStyle(
-                                              color: Color(0xFF6096B4),
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 50.0),
+                                              child: Text("Salam",
+                                                //classes[index].className,
+                                                style: TextStyle(
+                                                  color: Color(0xFF6096B4),
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(width: 38),
-                                          Icon(
-                                            Icons.person,
-                                            color: Color(0xFF6096B4),
-                                          ),
-                                          Text(
-                                            'Teacher Name',
-                                            style: TextStyle(
-                                              color: Color(0xFF6096B4),
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
+                                          ],
+                                        ),
+                                        SizedBox(height: 16),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 25),
+                                            Text(
+                                              '9055',
+                                              style: TextStyle(
+                                                color: Color(0xFF6096B4),
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(width: 45),
-                                        ],
-                                      ),
-                                    ],
+                                            SizedBox(width: 38),
+                                            Icon(
+                                              Icons.person,
+                                              color: Color(0xFF6096B4),
+                                            ),
+                                            Text(
+                                              'Teacher Name',
+                                              style: TextStyle(
+                                                color: Color(0xFF6096B4),
+                                                fontSize: 15.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(width: 45),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 20)
-                        ],
-                      );
-                    })
-                : Align(
-                    alignment: Alignment.center,
-                    child: Text("No Classes to Show :(")),
-          )
-        ],
+                            SizedBox(height: 20)
+                          ],
+                        );
+                      })
+                  : Align(
+                      alignment: Alignment.center,
+                      child: Text("No Classes to Show :(")),
+            )
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(right: 10.0),
+          child: FloatingActionButton(
+            backgroundColor: Color(0xFFD2721A),
+            onPressed: () {
+              // Show refresh indicator programmatically on button tap.
+              _refreshIndicatorKey.currentState?.show();
+            },
+            child: const Icon(Icons.refresh),
+            //label: null,
+          ),
+        ),
       ),
     );
   }

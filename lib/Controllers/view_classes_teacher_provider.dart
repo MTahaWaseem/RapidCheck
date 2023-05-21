@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import '../Data/Models/assessment_model.dart';
 import '../Data/Models/class_model.dart';
-import '../Data/get_assessments.dart';
 import '../Data/get_classes.dart';
 
-class ViewClassesProvider with ChangeNotifier {
+class ViewClassesTeacherProvider with ChangeNotifier {
 
   ClassModel classes = ClassModel();
   bool loading = false;

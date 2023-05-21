@@ -8,22 +8,17 @@ import '../config.dart';
 import 'Models/class_model.dart';
 
 Future<ClassModel> getClasses(context) async {
-
   ClassModel result = ClassModel();
 
   try {
     final response = await http.get(
-      Uri.parse("${URL}/classes"),
-
-      // headers: {
-      //   HttpHeaders.contentTypeHeader: "application/json",
-      // },
-
+      Uri.parse("${URL}/api/classes/?limit=1000000")
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
       result = ClassModel.fromJson(item);
     } else {
+      print(response.body);
       Fluttertoast.showToast(
           msg: "Error Fetching Classes",
           toastLength: Toast.LENGTH_SHORT,
@@ -31,8 +26,7 @@ Future<ClassModel> getClasses(context) async {
           timeInSecForIosWeb: 2,
           backgroundColor: Colors.redAccent,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     }
   } catch (e) {
     log("Catched! ", error: e);

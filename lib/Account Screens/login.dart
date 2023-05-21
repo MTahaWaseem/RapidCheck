@@ -29,16 +29,6 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<LoginProvider>(context);
 
-    if (loginProvider.loading) {
-      return Scaffold(
-        body: Container(
-          color: Colors.orange,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    } else {
       return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -167,7 +157,7 @@ class _LoginState extends State<Login> {
                   left: MediaQuery.of(context).size.width * 0.18,
                   right: MediaQuery.of(context).size.width * 0.18,
                   child: SizedBox(
-                    height: (MediaQuery.of(context).size.height) * 0.05,
+                    height: (MediaQuery.of(context).size.height) * 0.045,
                     width: MediaQuery.of(context).size.width * 0.1,
                     child: TextFormField(
                       onChanged: loginProvider.updateEmail,
@@ -286,29 +276,27 @@ class _LoginState extends State<Login> {
                   (MediaQuery.of(context).size.height) * 0.04,
               child: GestureDetector(
                 onTap: () async {
-                  if (teacher) {
+
+                  await loginProvider.getPostData(context);
+
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     await prefs.setBool('isLoggedIn', true);
-                    await loginProvider.getPostData(context);
+                    String role = loginProvider.user.user.role;
+                    String teacher = 'TEACHER';
+
+                    if (role == teacher ){
+                      await prefs.setBool('isTeacher', true);
+                    }else{
+                      await prefs.setBool('isTeacher', false);
+                    }
 
                     if (loginProvider.user.success) {
-
+                      print("Role = " + loginProvider.user.user.role);
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => Navbar()),
                       );
                     }
-
-                  } else {
-                    // on succesfull login
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    await prefs.setBool('isLoggedIn', true);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Navbar()),
-                    );
-                  }
                 },
                 child: Container(
                   width: (MediaQuery.of(context).size.height) * 0.08,
@@ -325,9 +313,21 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
+            Positioned(
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Visibility(
+                visible: loginProvider.loading,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            )
           ],
         ),
       );
     }
   }
-}
+
