@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Data/Models/user_model.dart';
+import 'package:fyp/Data/Models/login_response_model.dart';
 import 'package:fyp/Student/view_classes_student.dart';
 import 'package:fyp/Teacher/view_classes_teacher.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +8,7 @@ import 'Student/notifications.dart';
 import 'Student/take_assessment.dart';
 import 'Teacher/profile.dart';
 
-List<UserModel> user = [];
+List<LoginResponseModel> user = [];
 
 class Navbar extends StatefulWidget {
   const Navbar({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> {
 
   static final List<Widget> _widgetOptionsTeacher = <Widget>[
-     const ViewClassesTeacher(),
+    const ViewClassesTeacher(),
     TakeAssessment(),
     const Notifications(),
     ProfileScreen(),
@@ -39,7 +39,7 @@ class _NavbarState extends State<Navbar> {
   void checkRole() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      isTeacher = prefs.getBool('isTeacher') ?? true;
+      isTeacher = prefs.getBool('isTeacher') ?? false;
     });
     print("In check role: " + isTeacher.toString());
     isLoading = false;
@@ -48,6 +48,7 @@ class _NavbarState extends State<Navbar> {
   @override
   void initState() {
     super.initState();
+    isLoading = true;
       checkRole();
   }
 

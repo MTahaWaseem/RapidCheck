@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:fyp/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Account Screens/login.dart';
 import 'nav_bar.dart';
 
@@ -33,9 +31,8 @@ class _SplashScreenState extends State<SplashScreen> {
         opacityLevel = 1.0;
       });
     });
-
-    Timer(Duration(seconds: 2), () {
-      checkLoginStatus();
+    checkLoginStatus();
+    Timer(Duration(seconds: 2), () async {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => isLoggedIn ? Navbar() : Login()));
     });
   }

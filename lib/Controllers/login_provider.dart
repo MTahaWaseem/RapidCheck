@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:fyp/Data/Models/user_model.dart';
-import 'package:fyp/Data/get_user.dart';
+import 'package:fyp/Data/Models/login_response_model.dart';
+import 'package:fyp/Data/get_login_response.dart';
+import '../Data/Models/signup_response_model.dart';
+import '../Data/get_signup_response.dart';
 
 class LoginProvider with ChangeNotifier {
 
-  UserModel user = UserModel();
+  LoginResponseModel user = LoginResponseModel();
+  SignupResponseModel teacher = SignupResponseModel();
+
   String email = '';
   String password = '';
   bool loading = false;
@@ -19,11 +23,27 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getPostData(context) async {
+  getPostData(String role, context) async {
     loading = true;
     notifyListeners();
-    user = await getUser(email, password, context);
+    user = await getLoginResponse(role, email, password, context);
     loading = false;
     notifyListeners();
   }
+
+  getPostDataTeacher(String firstName, String lastName, String userName, String password, String confirmPassword, String email, String role, context) async {
+    loading = true;
+    notifyListeners();
+    teacher = await getSignupResponse(firstName, lastName, userName , password , confirmPassword, email, role, context);
+    loading = false;
+    notifyListeners();
+  }
+
+    void refresh() {
+      email = '';
+      password = '';
+      // Notify listeners after refreshing the values
+      notifyListeners();
+  }
+
 }

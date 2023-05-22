@@ -22,10 +22,10 @@ class _ViewOneStudentState extends State<ViewOneStudent> {
   @override
   void initState() {
     super.initState();
-    ClassModel result = ClassModel();
-    classes.add(result);
-    classes.add(result);
-    classes.add(result);
+    // ClassModel result = ClassModel();
+    // classes.add(result);
+    // classes.add(result);
+    // classes.add(result);
   }
 
   @override

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../Account Screens/login.dart';
 import '../Controllers/login_provider.dart';
-import '../Data/Models/user_model.dart';
+import '../Data/Models/login_response_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

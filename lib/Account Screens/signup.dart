@@ -1,5 +1,16 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp/Account%20Screens/login.dart';
+import 'package:fyp/Data/Models/class_model.dart';
+import 'package:fyp/Data/Models/signup_response_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../config.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -314,8 +325,8 @@ class _SignupState extends State<Signup> {
             left: MediaQuery.of(context).size.width * 0.50 -
                 MediaQuery.of(context).size.height * 0.04,
             child: GestureDetector(
-              onTap: () {
-                // Handle button tap
+              onTap: () async {
+
               },
               child: Container(
                 width: MediaQuery.of(context).size.height * 0.08,

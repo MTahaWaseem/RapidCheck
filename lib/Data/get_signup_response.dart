@@ -3,23 +3,35 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyp/Data/Models/login_response_model.dart';
 import 'package:fyp/config.dart';
 import 'package:http/http.dart' as http;
 
-Future<LoginResponseModel> getUser(String username, String password, context) async {
+import 'Models/signup_response_model.dart';
 
-  LoginResponseModel user = LoginResponseModel();
+Future<SignupResponseModel> getSignupResponse(
+    String firstName,
+    String lastName,
+    String userName,
+    String password,
+    String confirmPassword,
+    String email,
+    String role,
+    context) async {
+  SignupResponseModel _teacher = SignupResponseModel();
 
   try {
     final Map<String, dynamic> requestBody = {
-      "usernameOrEmail": username,
+      "firstName": firstName,
+      "lastName": lastName,
+      "username": userName,
       "password": password,
-      "role": "TEACHER",
+      "confirmPassword": confirmPassword,
+      "email": email,
+      "role": role,
     };
     final String jsonBody = jsonEncode(requestBody);
     final response = await http.post(
-      Uri.parse("${URL}/api/users/login"),
+      Uri.parse("${URL}/api/users/register"),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
       },
@@ -27,21 +39,21 @@ Future<LoginResponseModel> getUser(String username, String password, context) as
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
-      user = LoginResponseModel.fromJson(item);
+      _teacher = SignupResponseModel.fromJson(item);
+
     } else {
       Fluttertoast.showToast(
-          msg: "Invalid Login Credentials",
+          msg: "Email Already Exists",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
           backgroundColor: Colors.redAccent,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     }
   } catch (e) {
     log("Catched! ", error: e);
   }
 
-  return user;
+  return _teacher;
 }
