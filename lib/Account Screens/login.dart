@@ -33,9 +33,6 @@ class _LoginState extends State<Login> {
 
     // Refresh the provider values
     Provider.of<LoginProvider>(context, listen: false).refresh();
-
-    // Other actions you may need to perform after refreshing
-    // ...
   }
 
   @override

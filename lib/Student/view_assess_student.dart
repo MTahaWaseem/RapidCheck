@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp/Student/quiz.dart';
 import '../Data/Models/assessment_model.dart';
 
 class ViewAssessStudent extends StatefulWidget {
@@ -188,8 +189,12 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                   BorderRadius.all(Radius.circular(20))),
                           child: InkWell(
                             splashColor: Colors.grey, // Splash color
-                            onTap: () => print(
-                                _filteredAssessments[index].totalMarks + index),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => QuizPage(
+                                    // Some parameter here?
+                                  )),
+                            ),
                             child: Container(
                               height: 80,
                               child: Column(

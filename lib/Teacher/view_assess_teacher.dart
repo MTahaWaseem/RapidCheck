@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fyp/Teacher/post_assessment.dart';
 
 import '../Data/Models/assessment_model.dart';
+import '../Data/Models/class_model.dart';
 
 class ViewAssessmentsTeacher extends StatefulWidget {
-  const ViewAssessmentsTeacher({Key? key}) : super(key: key);
-
+  final Class classId;
+  const ViewAssessmentsTeacher({Key? key,required this.classId}) : super(key: key);
   @override
   State<ViewAssessmentsTeacher> createState() => _ViewAssessmentsTeacherState();
 }
@@ -70,6 +71,8 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
 
   @override
   void initState() {
+
+    Class _class = widget.classId;
     super.initState();
     AssessmentModel result = new AssessmentModel();
     print(assess.length);
@@ -79,6 +82,7 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
 
   @override
   Widget build(BuildContext context) {
+    Class _class = widget.classId;
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -113,8 +117,8 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  MainText(w, "Physics Evening"),
-                  SubText(w, h, "PHY-9055"),
+                  MainText(w, _class.className),
+                  SubText(w, h, _class.courseCode),
                   Stack(
                     children: [
                       Container(

@@ -7,16 +7,24 @@ import 'package:fyp/Teacher/view_students.dart';
 import '../Data/Models/class_model.dart';
 
 class ViewClassTeacher extends StatefulWidget {
-  const ViewClassTeacher({Key? key}) : super(key: key);
+  final Class classId; // Add the classId parameter
+
+  const ViewClassTeacher({Key? key, required this.classId}) : super(key: key);
 
   @override
   State<ViewClassTeacher> createState() => _ViewClassTeacherState();
 }
+
+
 class _ViewClassTeacherState extends State<ViewClassTeacher> {
-List<ClassModel> classes = [];
+
+
+  List<ClassModel> classes = [];
 
   @override
   void initState() {
+
+    Class _class = widget.classId;
 
     super.initState();
     ClassModel result = new ClassModel();
@@ -28,6 +36,7 @@ List<ClassModel> classes = [];
 
   @override
   Widget build(BuildContext context) {
+    Class _class = widget.classId;
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -65,9 +74,9 @@ List<ClassModel> classes = [];
                   SizedBox(
                     height: h / 25,
                   ),
-                  MainText(w, "Physics Evening"),
+                  MainText(w, _class.className),
                   SizedBox(height: 10),
-                  SubText(w, "PHY-012"),
+                  SubText(w, _class.courseCode),
                   SizedBox(height: 20),
                   Stack(
                     children: [
@@ -135,8 +144,7 @@ List<ClassModel> classes = [];
                                         splashColor: Colors.blueGrey, // Splash color
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) => ViewAssessmentsTeacher(
-                                                // Some parameter here?
+                                              builder: (context) => ViewAssessmentsTeacher(classId: _class
                                               )),
                                         ),
                                         child: Container(

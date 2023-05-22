@@ -7,11 +7,13 @@ import '../Data/get_signup_response.dart';
 class LoginProvider with ChangeNotifier {
 
   LoginResponseModel user = LoginResponseModel();
-  SignupResponseModel teacher = SignupResponseModel();
+  SignupResponseModel register = SignupResponseModel();
 
   String email = '';
   String password = '';
   bool loading = false;
+
+
 
   void updateEmail(String value) {
     email = value;
@@ -31,10 +33,10 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getPostDataTeacher(String firstName, String lastName, String userName, String password, String confirmPassword, String email, String role, context) async {
+  getSignupResponseData(String firstName, String lastName, String userName, String password, String confirmPassword, String email, String role, context) async {
     loading = true;
     notifyListeners();
-    teacher = await getSignupResponse(firstName, lastName, userName , password , confirmPassword, email, role, context);
+    register = await getSignupResponse(firstName, lastName, userName , password , confirmPassword, email, role, context);
     loading = false;
     notifyListeners();
   }

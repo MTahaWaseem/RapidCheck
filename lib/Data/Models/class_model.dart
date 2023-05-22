@@ -1,22 +1,3 @@
-class ClassModel {
-  bool success;
-  List<Class> classes;
-  int count;
-
-  ClassModel({this.success = false, this.classes = const [], this.count = 0});
-
-  factory ClassModel.fromJson(Map<String, dynamic> json) {
-    return ClassModel(
-      success: json['success'] ?? false,
-      classes: (json['classes'] as List<dynamic>?)
-              ?.map((classJson) => Class.fromJson(classJson))
-              .toList() ??
-          [],
-      count: json['count'] ?? 0,
-    );
-  }
-}
-
 class Class {
 
   String createdAt;
@@ -45,7 +26,52 @@ class Class {
       className: json['className'] ?? "",
     );
   }
+
+  factory Class.empty() {
+    return Class(teacher: Teacher.empty());
+  }
+
 }
+
+class ClassModel {
+  bool success;
+  List<Class> classes;
+  int count;
+
+  ClassModel({this.success = false, this.classes = const [], this.count = 0});
+
+  factory ClassModel.fromJson(Map<String, dynamic> json) {
+    return ClassModel(
+      success: json['success'] ?? false,
+      classes: (json['classes'] as List<dynamic>?)
+              ?.map((classJson) => Class.fromJson(classJson))
+              .toList() ??
+          [],
+      count: json['count'] ?? 0,
+    );
+  }
+}
+
+class AddClassModel {
+  bool success;
+  String message;
+  Class classData;
+
+  AddClassModel({
+    this.success = false,
+    this.message = '',
+    Class? classData, // User? user,
+  }) : classData = classData ?? Class.empty();
+
+  factory AddClassModel.fromJson(Map<String, dynamic> json) {
+    return AddClassModel(
+      success: json['success'],
+      message: json['message'],
+      classData: Class.fromJson(json['class']),
+    );
+  }
+}
+
 
 class Teacher {
   String id;
@@ -67,5 +93,8 @@ class Teacher {
       lastName: json['lastName'] ?? "",
       role: json['role'] ?? "",
     );
+  }
+  factory Teacher.empty() {
+    return Teacher();
   }
 }

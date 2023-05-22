@@ -1,16 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp/Account%20Screens/login.dart';
-import 'package:fyp/Data/Models/class_model.dart';
-import 'package:fyp/Data/Models/signup_response_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Controllers/login_provider.dart';
 import '../config.dart';
+import '../nav_bar.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -49,6 +44,7 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
+    final loginProvider = Provider.of<LoginProvider>(context);
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
 
@@ -103,7 +99,8 @@ class _SignupState extends State<Signup> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.03),
                       Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -114,9 +111,11 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
                       Padding(
-                        padding: EdgeInsets.only(left: w * 0.03, right: w * 0.03),
+                        padding:
+                            EdgeInsets.only(left: w * 0.03, right: w * 0.03),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -127,8 +126,10 @@ class _SignupState extends State<Signup> {
                                 onPressed: () {
                                   if (student) {
                                     setState(() {
-                                      _buttonColorTeacher = Colors.blue.shade900;
-                                      _buttonColorStudent = Colors.grey.shade500;
+                                      _buttonColorTeacher =
+                                          Colors.blue.shade900;
+                                      _buttonColorStudent =
+                                          Colors.grey.shade500;
                                       teacher = true;
                                       student = false;
                                     });
@@ -150,8 +151,10 @@ class _SignupState extends State<Signup> {
                                 onPressed: () {
                                   if (teacher) {
                                     setState(() {
-                                      _buttonColorTeacher = Colors.grey.shade500;
-                                      _buttonColorStudent = Colors.blue.shade900;
+                                      _buttonColorTeacher =
+                                          Colors.grey.shade500;
+                                      _buttonColorStudent =
+                                          Colors.blue.shade900;
                                       teacher = false;
                                       student = true;
                                     });
@@ -179,12 +182,12 @@ class _SignupState extends State<Signup> {
                           MyIcon: Icon(Icons.person)),
                       SizedBox(height: h * 0.01),
                       MyTextField(
-                          h: h,
-                          w: w,
-                          firstNameController: _lastNameController,
-                          Message: 'Please Enter Your Last Name',
-                          HintText: 'Last Name',
-                          MyIcon: Icon(Icons.person),
+                        h: h,
+                        w: w,
+                        firstNameController: _lastNameController,
+                        Message: 'Please Enter Your Last Name',
+                        HintText: 'Last Name',
+                        MyIcon: Icon(Icons.person),
                       ),
                       SizedBox(height: h * 0.01),
                       MyTextField(
@@ -196,12 +199,13 @@ class _SignupState extends State<Signup> {
                           MyIcon: Icon(Icons.account_circle)),
                       SizedBox(height: h * 0.01),
                       MyTextField(
-                          h: h,
-                          w: w,
-                          firstNameController: _emailController,
-                          Message: 'Please Enter Your Email',
-                          HintText: 'Email',
-                          MyIcon: Icon(Icons.email),),
+                        h: h,
+                        w: w,
+                        firstNameController: _emailController,
+                        Message: 'Please Enter Your Email',
+                        HintText: 'Email',
+                        MyIcon: Icon(Icons.email),
+                      ),
                       SizedBox(height: h * 0.01),
                       SizedBox(
                         height: h * 0.05,
@@ -269,8 +273,7 @@ class _SignupState extends State<Signup> {
             ),
           ),
           Stack(
-            children:
-              [
+            children: [
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.915,
                 left: MediaQuery.of(context).size.width * 0.1,
@@ -326,7 +329,38 @@ class _SignupState extends State<Signup> {
                 MediaQuery.of(context).size.height * 0.04,
             child: GestureDetector(
               onTap: () async {
+                String role = 'TEACHER';
+                if (student) {
+                  role = 'STUDENT';
+                }
+                await loginProvider.getSignupResponseData(
+                    _firstNameController.text,
+                    _lastNameController.text,
+                    _usernameController.text,
+                    _passwordController.text,
+                    _confirmPasswordController.text,
+                    _emailController.text,
+                    role,
+                    context);
 
+                if (loginProvider.register.success) {
+                  String authToken = loginProvider.register.authToken;
+
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setBool('isLoggedIn', true);
+                  await prefs.setString('authToken', authToken);
+                  if (teacher) {
+                    await prefs.setBool('isTeacher', true);
+                  } else {
+                    await prefs.setBool('isTeacher', false);
+                  }
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Navbar()),
+                  );
+                }
               },
               child: Container(
                 width: MediaQuery.of(context).size.height * 0.08,
@@ -343,6 +377,18 @@ class _SignupState extends State<Signup> {
               ),
             ),
           ),
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Visibility(
+              visible: loginProvider.loading,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          )
         ],
       ),
     );

@@ -39,11 +39,30 @@ Future<SignupResponseModel> getSignupResponse(
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
+
+      Fluttertoast.showToast(
+          msg: "Signup Successfull",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0);
       _teacher = SignupResponseModel.fromJson(item);
 
-    } else {
+    } else if (response.statusCode == 400 ) {
       Fluttertoast.showToast(
-          msg: "Email Already Exists",
+          msg: 'Passwords Dont Match',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0);
+
+    }else{
+      Fluttertoast.showToast(
+          msg: 'Unable to Sign Up',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -54,6 +73,5 @@ Future<SignupResponseModel> getSignupResponse(
   } catch (e) {
     log("Catched! ", error: e);
   }
-
   return _teacher;
 }

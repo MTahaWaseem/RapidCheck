@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp/Controllers/login_provider.dart';
 import 'package:fyp/splash_screen.dart';
 import 'package:provider/provider.dart';
-import 'Controllers/view_classes_teacher_provider.dart';
+import 'Controllers/view_classes_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,8 +30,8 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider<LoginProvider>(
             create: (context) => LoginProvider(),
           ),
-          ChangeNotifierProvider<ViewClassesTeacherProvider>(
-            create: (context) => ViewClassesTeacherProvider(),
+          ChangeNotifierProvider<ViewClassesProvider>(
+            create: (context) => ViewClassesProvider(),
           ),
           // Add more providers as needed
         ],

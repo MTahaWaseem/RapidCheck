@@ -1,40 +1,45 @@
-class CourseModel {
-  final String courseID;
-  final String courseName;
-  // final String courseCode;
-  // final String classDescription;
-  // final String teacherId;
-  // final DateTime createdAt;
+class CourseResponseModel {
+  bool success;
+  List<Course> courses;
+  int count;
 
-  CourseModel(
-      {
-    this.courseID = "123",
-    this.courseName = "Physics Evening",
-    // required this.courseCode,
-    // required this.classDescription,
-    // required this.teacherId,
-    // required this.createdAt,
+  CourseResponseModel({
+    this.success = false,
+    this.courses = const [],
+    this.count = 0,
   });
 
-  static fromJson(Map<String, dynamic> json) {
-    return CourseModel(
-      courseID: json['PHY-C'],
-      courseName: json['Physics'],
-      // courseCode: json['courseCode'],
-      // classDescription: json['classDescription'],
-      // teacherId: json['teacherId'],
-      // createdAt: json['createdAt'],
+  factory CourseResponseModel.fromJson(Map<String, dynamic> json) {
+    var courseList = json['courses'] as List;
+    List<Course> courses = courseList.map((course) => Course.fromJson(course)).toList();
+
+    return CourseResponseModel(
+      success: json['success'] ?? false,
+      courses: courses,
+      count: json['count'] ?? 0,
     );
   }
+}
 
-  toJson() {
-    return {
-      'courseID': courseID,
-      'courseName': courseName,
-      // 'courseCode': courseCode,
-      // 'classDescription': classDescription,
-      // 'teacherId': teacherId,
-      // 'createdAt': createdAt,
-    };
+class Course {
+  String id;
+  String courseCode;
+  String courseDescription;
+  String courseName;
+
+  Course({
+    this.id = '',
+    this.courseCode = '',
+    this.courseDescription = '',
+    this.courseName = '',
+  });
+
+  factory Course.fromJson(Map<String, dynamic> json) {
+    return Course(
+      id: json['_id'] ?? '',
+      courseCode: json['courseCode'] ?? '',
+      courseDescription: json['courseDescription'] ?? '',
+      courseName: json['courseName'] ?? '',
+    );
   }
 }
