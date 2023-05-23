@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp/Teacher/view_class_teacher.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,6 +116,7 @@ class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
     if (authToken != null) {
       String token = authToken;
       await myProvider.getClassesData(token, context);
+      setState(() {});
     } else {
       print('Authentication token not found in shared preferences');
     }
@@ -374,7 +376,7 @@ class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
                                                     ),
                                                     actions: <Widget>[
                                                       TextButton(
-                                                        onPressed: () {
+                                                        onPressed: () async {
                                                           myProvider
                                                               .addClassData(
                                                                   dropdownValue, // Class Code
@@ -382,6 +384,15 @@ class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
                                                                   classDesc,
                                                                   authToken,
                                                                   context);
+                                                          print(myProvider.classData.message);
+                                                          Fluttertoast.showToast(
+                                                              msg: "Class Created Successfully",
+                                                              toastLength: Toast.LENGTH_SHORT,
+                                                              gravity: ToastGravity.CENTER,
+                                                              timeInSecForIosWeb: 2,
+                                                              backgroundColor: Colors.redAccent,
+                                                              textColor: Colors.white,
+                                                              fontSize: 16.0);
                                                           Navigator.of(ctx)
                                                               .pop();
                                                         },
@@ -567,7 +578,7 @@ class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
                               })
                           : Align(
                               alignment: Alignment.center,
-                              child: Text("")),
+                              child: Text("Add a Class to Begin :)")),
                     )
                   ],
                 )),

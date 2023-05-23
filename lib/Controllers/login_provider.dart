@@ -13,8 +13,6 @@ class LoginProvider with ChangeNotifier {
   String password = '';
   bool loading = false;
 
-
-
   void updateEmail(String value) {
     email = value;
     notifyListeners();

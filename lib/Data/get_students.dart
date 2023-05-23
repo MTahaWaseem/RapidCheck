@@ -2,34 +2,32 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyp/Data/Models/get_assessments_model.dart';
 import 'package:fyp/Data/Models/get_students_model.dart';
 import 'package:http/http.dart' as http;
 import '../config.dart';
 
-Future<GetAssessModel> getAssessments(String classID, String authToken, context) async {
+Future<GetStudentsModel> getStudents(String classID, String authToken, context) async {
 
-  GetAssessModel assessments = GetAssessModel();
+  GetStudentsModel students = GetStudentsModel();
 
   try {
     Map<String, String> headers = {
       'Authorization': 'Bearer $authToken',
       'Content-Type': 'application/json',
     };
-//http://api.rapidcheck.babusar.cloud/api/assessments?classId=646b342aceb2945fda84f51a
+
     final response = await http.get(
-        Uri.parse("${URL}/api/assessments?classId=${classID}"),
+        Uri.parse("${URL}/api/classes/get-class-students/${classID}"),
         headers: headers
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
-      print("Before FromJSON");
-      assessments = GetAssessModel.fromJson(item);
-      print("After FromJSON");
+      print("I am here");
+      students = GetStudentsModel.fromJson(item);
+      print("Sad lyfe");
     } else {
-      print(response.body);
       Fluttertoast.showToast(
-          msg: "Error Fetching Assessments",
+          msg: "Error Fetching Students",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -41,5 +39,5 @@ Future<GetAssessModel> getAssessments(String classID, String authToken, context)
     log("Catched! ", error: e);
   }
 
-  return assessments;
+  return students;
 }

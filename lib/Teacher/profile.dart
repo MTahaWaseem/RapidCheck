@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp/config.dart';
 import 'package:fyp/main.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   if (response.statusCode == 200 ||
                       response.statusCode == 201) {
+                    _deleteAppDir();
+                    _deleteCacheDir();
                     Fluttertoast.showToast(
                         msg: "Logged Out Succesfully",
                         toastLength: Toast.LENGTH_SHORT,
@@ -75,5 +78,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+  /// this will delete cache
+  Future<void> _deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+  }
+
+  /// this will delete app's storage
+  Future<void> _deleteAppDir() async {
+    final appDir = await getApplicationSupportDirectory();
+
+    if(appDir.existsSync()){
+      appDir.deleteSync(recursive: true);
+    }
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/Controllers/login_provider.dart';
+import 'package:fyp/Controllers/take_assessment_provider.dart';
+import 'package:fyp/Controllers/view_assessments_provider.dart';
 import 'package:fyp/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'Controllers/view_classes_provider.dart';
+import 'Controllers/view_students_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +36,19 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider<ViewClassesProvider>(
             create: (context) => ViewClassesProvider(),
           ),
+          ChangeNotifierProvider<ViewStudentsProvider>(
+            create: (context) => ViewStudentsProvider(),
+          ),
+          ChangeNotifierProvider<ViewAssessmentsProvider>(
+            create: (context) => ViewAssessmentsProvider(),
+          ),
+          ChangeNotifierProvider<TakeAssessmentProvider>(
+            create: (context) => TakeAssessmentProvider(),
+          ),
           // Add more providers as needed
         ],
+
+        //ViewStudentsProvider
         child: MaterialApp(
           title: 'RapidCheck',
           theme: ThemeData(

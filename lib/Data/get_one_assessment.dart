@@ -2,34 +2,36 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyp/Data/Models/get_assessments_model.dart';
-import 'package:fyp/Data/Models/get_students_model.dart';
 import 'package:http/http.dart' as http;
 import '../config.dart';
+import 'Models/get_one_asses_model.dart';
 
-Future<GetAssessModel> getAssessments(String classID, String authToken, context) async {
+Future<GetOneAssessModel> getOneAssessment(String assessID, String authToken, context) async {
 
-  GetAssessModel assessments = GetAssessModel();
+  GetOneAssessModel oneAssess = GetOneAssessModel();
 
   try {
     Map<String, String> headers = {
       'Authorization': 'Bearer $authToken',
       'Content-Type': 'application/json',
     };
-//http://api.rapidcheck.babusar.cloud/api/assessments?classId=646b342aceb2945fda84f51a
+
+    print("AssessID + " + assessID);
+
     final response = await http.get(
-        Uri.parse("${URL}/api/assessments?classId=${classID}"),
+        Uri.parse("${URL}/api/assessments/view-assessment/${assessID}"),
         headers: headers
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
       print("Before FromJSON");
-      assessments = GetAssessModel.fromJson(item);
+      oneAssess = GetOneAssessModel.fromJson(item);
       print("After FromJSON");
     } else {
+      print(response.statusCode);
       print(response.body);
       Fluttertoast.showToast(
-          msg: "Error Fetching Assessments",
+          msg: "Error Fetching One Assessment",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -41,5 +43,5 @@ Future<GetAssessModel> getAssessments(String classID, String authToken, context)
     log("Catched! ", error: e);
   }
 
-  return assessments;
+  return oneAssess;
 }

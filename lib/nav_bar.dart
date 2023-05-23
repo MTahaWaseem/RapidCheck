@@ -51,7 +51,7 @@ class _NavbarState extends State<Navbar> {
   @override
   void initState() {
     super.initState();
-    isLoading = false;
+    isLoading = true;
     checkRole();
   }
 

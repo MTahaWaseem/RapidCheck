@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:fyp/Controllers/view_assessments_provider.dart';
 import 'package:fyp/Student/class_announcements.dart';
 import 'package:fyp/Student/regrade_requests_student.dart';
 import 'package:fyp/Student/take_assessment.dart';
 import 'package:fyp/Student/view_assess_student.dart';
 import 'package:fyp/Student/view_score.dart';
 import 'package:fyp/Teacher/view_students.dart';
-import '../Data/Models/assessment_model.dart';
+import 'package:provider/provider.dart';
+import '../Data/Models/class_model.dart';
+import '../Data/Models/get_assessments_model.dart';
 
 class ViewClassStudent extends StatefulWidget {
-  const ViewClassStudent({Key? key}) : super(key: key);
+  final Class classId; // Add the classId parameter
+  final String authToken;
+  const ViewClassStudent(
+      {Key? key, required this.classId, required this.authToken})
+      : super(key: key);
 
   @override
   State<ViewClassStudent> createState() => _ViewClassStudentState();
 }
 
-String className = '';
+String authToken = '';
+
 final Color background2 = Color(0xFFBDCDD6);
 final Color fill2 = Colors.white; // Active Quiz
 final double fillPercent2 = 70; // fills 70%
@@ -30,19 +38,43 @@ final List<Color> active = [
 
 class _ViewClassStudentState extends State<ViewClassStudent> {
 //Testing ListBuilder
-  List<AssessmentModel> assess = [];
+  List<Assessments> assess = [];
 
   @override
   void initState() {
     super.initState();
+    Class _class = widget.classId;
+    authToken = widget.authToken;
+    loadAssessments(_class.id, authToken);
+  }
+
+  Future<void> loadAssessments(String classID, String authToken) async {
+    final myProvider =
+        Provider.of<ViewAssessmentsProvider>(context, listen: false);
+    try {
+      String token = authToken;
+      await myProvider.getAssessmentsData(classID, token, context);
+    } catch (error) {
+      print("Error in loading assessments");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    Class _class = widget.classId;
+
+    final myProvider = Provider.of<ViewAssessmentsProvider>(context);
+    assess = myProvider.assessments.assessments ?? [];
+    print("List length " + assess.length.toString());
 
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
-    return Scaffold(
+
+    return myProvider.loading
+        ? const Center(
+      child: CircularProgressIndicator(),
+    )
+        : Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(35),
@@ -75,9 +107,9 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  mainText(w, "Physics Evening"),
+                  mainText(w, _class.className),
                   const SizedBox(height: 10),
-                  SubText(w, "PHY-012"),
+                  SubText(w, _class.courseCode),
                   const SizedBox(height: 20),
                   Stack(
                     children: [
@@ -112,7 +144,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                                   const ViewScore()),
                                         ),
                                         child: SizedBox(
-                                          width:  w * 0.5,
+                                          width: w * 0.5,
                                           height: 100,
                                           child: Row(
                                             children: [
@@ -129,7 +161,9 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                                   ),
                                                   SizedBox(height: 10),
                                                   Padding(
-                                                    padding: const EdgeInsets.only(left: 10.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
                                                     child: Text(
                                                       "Score",
                                                       style: TextStyle(
@@ -187,7 +221,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                                       )),
                                         ),
                                         child: SizedBox(
-                                          width:  w * 0.35,
+                                          width: w * 0.35,
                                           height: 100,
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
@@ -277,11 +311,13 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ViewAssessStudent(
-                                                      // Some parameter here?
+                                                  ViewAssessStudent(
+                                                      assess: assess,
+                                                    classId: _class,
+                                                    authToken: authToken
                                                       )),
                                         ),
-                                        child:  SizedBox(
+                                        child: SizedBox(
                                           width: w * 0.35,
                                           height: 90,
                                           child: Align(
@@ -351,13 +387,15 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                 begin: Alignment.centerLeft,
                               ),
                               borderRadius:
-                              BorderRadius.all(Radius.circular(20))),
+                                  BorderRadius.all(Radius.circular(20))),
                           child: InkWell(
                             splashColor: Colors.grey, // Splash color
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => QuizPage(
-                                    // Some parameter here?
+                                  builder: (context) => TakeAssessment(
+                                    authToken: authToken,
+                                    classId: _class,
+                                    assessID: assess[index].sId ?? '',
                                   )),
                             ),
                             child: Container(
@@ -378,10 +416,11 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                       ),
                                       Padding(
                                         padding:
-                                        const EdgeInsets.only(left: 50.0),
+                                            const EdgeInsets.only(left: 50.0),
                                         child: Text(
                                           _filteredAssessments[index]
-                                              .assessmentName,
+                                                  .assessmentName ??
+                                              '',
                                           style: TextStyle(
                                             color: Color(0xFF6096B4),
                                             fontSize: 16.0,
@@ -396,7 +435,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                     children: [
                                       SizedBox(width: 25),
                                       Text(
-                                        '9055',
+                                        '101',
                                         style: TextStyle(
                                           color: Color(0xFF6096B4),
                                           fontSize: 16.0,
@@ -409,7 +448,10 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                         color: Color(0xFF6096B4),
                                       ),
                                       Text(
-                                        '20 min',
+                                        _filteredAssessments[index]
+                                                .duration
+                                                .toString() ??
+                                            '',
                                         style: TextStyle(
                                           color: Color(0xFF6096B4),
                                           fontSize: 15.0,
@@ -417,37 +459,37 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                         ),
                                       ),
                                       SizedBox(width: 45),
-
                                       _filteredAssessments[index].status ==
-                                          "Graded"
+                                              "GRADED"
                                           ? Text(
-                                        _filteredAssessments[index]
-                                            .obtainedMarks.toInt()
-                                            .toString() +
-                                            "/" +
-                                            _filteredAssessments[index]
-                                                .totalMarks.toInt()
-                                                .toString(),
-                                        style: TextStyle(
-                                          color: Color(0xFF6096B4),
-                                          fontSize: 19.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                          : Padding(
-                                        padding: const EdgeInsets.only(left: 18.0),
-                                        child: Text(
-                                          "/" +
                                               _filteredAssessments[index]
-                                                  .totalMarks.toInt()
-                                                  .toString(),
-                                          style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 23.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      )
+                                                      .obtainedMarks
+                                                      .toString() +
+                                                  "/" +
+                                                  _filteredAssessments[index]
+                                                      .totalMarks
+                                                      .toString(),
+                                              style: TextStyle(
+                                                color: Color(0xFF6096B4),
+                                                fontSize: 19.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 18.0),
+                                              child: Text(
+                                                "/" +
+                                                    _filteredAssessments[index]
+                                                        .totalMarks
+                                                        .toString(),
+                                                style: TextStyle(
+                                                  color: Color(0xFF6096B4),
+                                                  fontSize: 23.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
                                     ],
                                   ),
                                 ],
@@ -494,8 +536,8 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
     );
   }
 
-  List<AssessmentModel> get _filteredAssessments {
-    return assess.where((item) => item.status == 'Active').toList();
+  List<Assessments> get _filteredAssessments {
+    return assess.where((item) => item.status == 'ACTIVE').toList();
   }
 }
 

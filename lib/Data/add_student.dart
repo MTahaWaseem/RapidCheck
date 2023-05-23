@@ -3,24 +3,22 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyp/Data/Models/class_model.dart';
 import 'package:fyp/config.dart';
 import 'package:http/http.dart' as http;
+import '../Teacher/view_students.dart';
+import 'Models/add_student_model.dart';
 
-Future<AddClassModel> addClass(String code, String className, String desc, String authToken, context) async {
+Future<AddStudentModel> addStudent(String classID, String email, String authToken, context) async {
 
-  AddClassModel classData = AddClassModel();
+  AddStudentModel studentData = AddStudentModel();
 
   try {
-
     final Map<String, String> requestBody = {
-      "courseCode": code,
-      "className": className,
-      "classDescription": desc,
+      "email": email
     };
     String jsonBody = jsonEncode(requestBody);
     final response = await http.post(
-      Uri.parse("${URL}/api/classes/create-class"),
+      Uri.parse("${URL}/api/classes/add-single-student/${classID}"),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         HttpHeaders.authorizationHeader: "BEARER $authToken"
@@ -32,7 +30,7 @@ Future<AddClassModel> addClass(String code, String className, String desc, Strin
       final item = json.decode(response.body);
 
       Fluttertoast.showToast(
-          msg: "Class Created Successfully",
+          msg: "Student Added Successfully",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -40,11 +38,11 @@ Future<AddClassModel> addClass(String code, String className, String desc, Strin
           textColor: Colors.white,
           fontSize: 16.0);
 
-      classData = AddClassModel.fromJson(item);
+      studentData = AddStudentModel.fromJson(item);
     } else {
       print(response.statusCode);
       Fluttertoast.showToast(
-          msg: "Error Adding Class",
+          msg: "Error Adding Student",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -57,5 +55,5 @@ Future<AddClassModel> addClass(String code, String className, String desc, Strin
 
     log("Catched! ", error: e);
   }
-  return classData;
+  return studentData;
 }

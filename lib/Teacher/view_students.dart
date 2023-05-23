@@ -1,290 +1,300 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Teacher/view_class_teacher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp/Teacher/view_one_student.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../Controllers/view_students_provider.dart';
 import '../Data/Models/class_model.dart';
-
+import '../Data/Models/get_students_model.dart';
 class ViewStudents extends StatefulWidget {
-  const ViewStudents({Key? key}) : super(key: key);
+  final Class classId; // Add the classId parameter
+  const ViewStudents({Key? key, required this.classId}) : super(key: key);
 
   @override
   State<ViewStudents> createState() => _ViewStudentsState();
 }
-String className = ''; //
-// For Quizzes Container
-final Color background2 = Color(0xFFBDCDD6);
-final Color fill2 = Colors.white; // Active Quiz
-final double fillPercent2 = 70; // fills 70%
-final double fillStop2 = (100 - fillPercent2) / 100;
-final List<double> stops2 = [0.0, fillStop2, fillStop2, 1.0];
 
-final List<Color> active = [
-  background2,
-  background2,
-  fill2,
-  fill2,
-];
+final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+GlobalKey<RefreshIndicatorState>();
+
 
 class _ViewStudentsState extends State<ViewStudents> {
 //Testing ListBuilder
-  List<ClassModel> classes = [];
+  List<Students> students = [];
+  String authToken = '';
+
 
   @override
   void initState() {
     super.initState();
-    ClassModel result = new ClassModel();
-    print(classes.length);
-    classes.add(result);
-    classes.add(result);
-    classes.add(result);
+    getAuthToken();
+    Class _class = widget.classId;
+    loadData(_class.id);
   }
 
+
+  Future<void> _handleRefresh(String classID) async {
+    await loadData(classID);
+  }
+
+  Future<void> loadData(String classID) async {
+    final myProvider =
+    Provider.of<ViewStudentsProvider>(context, listen: false);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? authToken = prefs.getString('authToken');
+      if (authToken != null) {
+        String token = authToken;
+        await Future.wait([
+          myProvider.getStudentsData(classID, token, context),
+        ] as Iterable<Future>);
+      } else {
+        print('Authentication token not found in shared preferences');
+      }
+      // Data as been fetched successfully
+    } catch (error) {
+      // Handle the error
+    }
+  }
   @override
   Widget build(BuildContext context) {
+
+    Class _class = widget.classId;
+
+    final myProvider = Provider.of<ViewStudentsProvider>(context);
+    students = myProvider.students.students ?? [];
+
+
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(35),
-        child: AppBar(
 
-          leading: BackButton(
-              color: Colors.black
+    // return myProvider.loading
+    //     ? const Center(
+    //   child: CircularProgressIndicator(),
+    // )
+    //     : RefreshIndicator(
+    //     key: _refreshIndicatorKey,
+    //     onRefresh: _handleRefresh,
+    //     notificationPredicate: (ScrollNotification notification) {
+    //       return notification.depth == 0;
+    //     },
+    return myProvider.loading
+        ? const Center(
+      child: CircularProgressIndicator(),
+    )
+        : RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: ()=> _handleRefresh(_class.id),
+          notificationPredicate: (ScrollNotification notification) {
+            return notification.depth == 0;
+          },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(35),
+          child: AppBar(
+
+            leading: BackButton(
+                color: Colors.black
+            ),
+            shape: Border(bottom: BorderSide(color: Colors.black, width: 1)),
+            //title: Text('Salam'),
+            backgroundColor: Color(0xFFD2721A),
           ),
-          shape: Border(bottom: BorderSide(color: Colors.black, width: 1)),
-          //title: Text('Salam'),
-          backgroundColor: Color(0xFFD2721A),
         ),
-      ),
-      body: Stack(
-        children: [
-          BackgroundScreen(),
-          Positioned(
-            top: h / 128,
-            left: w / 32,
-            right: w / 32,
-            bottom: -10,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-              ),
-              elevation: 5.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: h / 25,
-                  ),
-                  MainText(w, "Physics Evening"),
-                  SizedBox(height: 10),
-                  SubText(w, "PHY-019"),
-                  SizedBox(height: 15),
-                  Stack(
+        body: Stack(
+          children: [
+            BackgroundScreen(),
+            Positioned(
+              top: h / 128,
+              left: w / 32,
+              right: w / 32,
+              bottom: -10,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                ),
+                elevation: 5.0,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                          height: classes.length < 3 ? 400 : 585,
-                          color: Color(0xFFF4F4F4)),
-                      Positioned(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(20, 22, 20, 0),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                "Students",
-                                style: TextStyle(
-                                  color: Color(0xFF737373),
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 60),
-                              SizedBox(
-                                width: 135,
-                                child: ElevatedButton(
+                      SizedBox(
+                        height: h / 25,
+                      ),
+                      MainText(w, _class.className),
+                      SizedBox(height: 10),
+                      SubText(w, _class.courseCode),
+                      SizedBox(height: 15),
+                      Stack(
+                        children: [
+                          Container(
+                              height: students.length < 3 ? 400 : 585,
+                              color: Color(0xFFF4F4F4)),
+                          Positioned(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(20, 22, 20, 0),
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    "Students",
+                                    style: TextStyle(
+                                      color: Color(0xFF737373),
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 60),
+                                  SizedBox(
+                                    width: 135,
+                                    child: ElevatedButton(
 
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.add),
-                                      SizedBox(width: 20),
-                                      Text(
-                                        'Student',
-                                        style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Color(0xFF6096B4),
-                                  ),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: Text(
-                                          "Enter Student Name",
-                                          style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        content: TextField(
-                                          onChanged: (value) {
-                                            className = value; // update the class name as the user types
-                                          },
-                                          //decoration: InputDecoration(hintText: 'Enter Course Name'),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              ClassModel result = new ClassModel();
-                                              classes.add(result);
-                                              setState(() {
-                                              });
-                                              // Method Call to add course name
-                                              Navigator.of(ctx).pop();
-                                            },
-                                            child: Container(
-                                              width: 100,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFF6096B4),
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                              ),
-                                              //color: Color(0xFF6096B4),
-                                              padding: const EdgeInsets.all(14),
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  "Add",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 15.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.add),
+                                          SizedBox(width: 20),
+                                          Text(
+                                            'Student',
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    );
-                                  },
-                                ),
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Color(0xFF6096B4),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AddStudent(classID: _class.id, authToken: authToken),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 215,
-            left: w / 8,
-            right: w / 8,
-            bottom: 0,
-            child: ListView.builder(
-                itemCount: classes.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Material(
-                        elevation: 5,
-                        shadowColor: Colors.grey,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: active,
-                                stops: stops2,
-                                end: Alignment.centerRight,
-                                begin: Alignment.centerLeft,
-                              ),
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(20))),
-                          child: InkWell(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            splashColor: Colors.blueGrey, // Splash color
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => ViewOneStudent(
-                                    // Tell Class ID Here
+            Positioned(
+              top: h * 0.25,
+              left: w / 8,
+              right: w / 8,
+              bottom: 0,
+              child: students.length == 0 ? Align(
+                  alignment: Alignment.center,
+                  child: Text("Add a Student to Begin :)"))
+                    : ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Material(
+                          elevation: 5,
+                          shadowColor: Colors.grey,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                            child: InkWell(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              splashColor: Colors.blueGrey, // Splash color
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => ViewOneStudent(
+                                      // Tell Class ID Here
 
-                                  )),
-                            ),
-                            child: Container(
-                              height: 80,
-                              child: Row(
-                                children: [
-                                  SizedBox(height: 13),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 30.0),
-                                    child: Column(
-                                      //crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(height: 10),
-                                        Text(
-                                          '17',
-                                          style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          '123',
-                                          style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                    )),
+                              ),
+                              child: Container(
+                                height: 80,
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 15),
+                                    Icon(
+                                      Icons.person,
+                                      color: Color(0xFF6096B4),
+                                      size: 55,
                                     ),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 30),
-                                      Icon(
-                                        Icons.person,
-                                        color: Color(0xFF6096B4),
-                                        size: 55,
-                                      ),
-                                      Text(
-                                        'Student Name',
+                                    SizedBox(width: 15),
+                                    SizedBox(
+                                      width: w * 0.4,
+                                      child: Text(
+                                        students[index].firstName ?? '',
                                         style: TextStyle(
                                           color: Color(0xFF6096B4),
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(width: 45),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    //SizedBox(width:30),
+                                    InkWell(
+                                      onTap: () {
+                                        _showConfirmationPopup(index, students[index].firstName ?? '' , context);
+                                      },
+                                      child: Icon(
+                                        Icons.remove_circle_outline,
+                                        color: Colors.grey,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20)
-                    ],
-                  );
-                }),
-          )
-        ],
+                        SizedBox(height: 20)
+                      ],
+                    );
+                  }),
+            )
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showConfirmationPopup(int index, String studentName, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: Text('Are you sure you want to remove ${studentName} from this class?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Perform delete operation
+                  students.removeAt(index);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -299,6 +309,82 @@ class _ViewStudentsState extends State<ViewStudents> {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+
+  Future<void> getAuthToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? _authToken = prefs.getString('authToken');
+    if (_authToken != null) {
+      authToken = _authToken;
+    } else {
+      print('Authentication token not found in shared preferences');
+    }
+  }
+}
+
+class AddStudent extends StatelessWidget {
+  final String classID;
+  final String authToken;
+
+  const AddStudent({
+    Key? key,
+    required this.classID,
+    required this.authToken,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    final myProvider = Provider.of<ViewStudentsProvider>(context);
+    String email = '';
+
+    return AlertDialog(
+      title: Text(
+        "Enter Student Email",
+        style: TextStyle(
+          color: Color(0xFF6096B4),
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      content: TextField(
+        onChanged: (value) {
+          email = value; // update the class name as the user types
+        },
+        //decoration: InputDecoration(hintText: 'Enter Course Name'),
+      ),
+      actions: <Widget>[
+        TextButton(
+              onPressed: () async {
+            myProvider.addStudentData(classID, email, authToken, context);
+            myProvider.getStudentsData(classID, authToken, context);
+            Navigator.of(context)
+                .pop();
+          },
+          child: Container(
+            width: 100,
+            decoration: BoxDecoration(
+              color: Color(0xFF6096B4),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            //color: Color(0xFF6096B4),
+            padding: const EdgeInsets.all(14),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Add",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Student/quiz.dart';
-import '../Data/Models/assessment_model.dart';
+import 'package:fyp/Student/take_assessment.dart';
+import 'package:fyp/Student/view_class_student.dart';
+import '../Data/Models/class_model.dart';
+import '../Data/Models/get_assessments_model.dart';
 
 class ViewAssessStudent extends StatefulWidget {
-  const ViewAssessStudent({Key? key}) : super(key: key);
+  final Class classId; // Add the classId parameter
+  final String authToken;
+  final List<Assessments> assess;
+
+  const ViewAssessStudent(
+      {Key? key, required this.classId, required this.authToken, required this.assess})
+      : super(key: key);
 
   @override
   State<ViewAssessStudent> createState() => _ViewAssessStudentState();
@@ -62,24 +70,26 @@ final List<Color> cancelled = [
   fill5,
 ];
 
+
 class _ViewAssessStudentState extends State<ViewAssessStudent> {
   // Setting initial value for Dropdown
+  List<Assessments> assess = [];
+
   String dropdownValue = 'Active';
 
-//Testing ListBuilder
-  List<AssessmentModel> assess = [];
 
   @override
   void initState() {
     super.initState();
-    AssessmentModel result = new AssessmentModel();
-    print(assess.length);
-    assess.add(result);
-    assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);
-  }
+   }
 
   @override
   Widget build(BuildContext context) {
+
+    assess = widget.assess;
+    Class _class = widget.classId;
+    print(assess.length);
+
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -172,13 +182,13 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                           decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: _filteredAssessments[index].status ==
-                                        "Active"
+                                        "ACTIVE"
                                     ? active
                                     : _filteredAssessments[index].status ==
-                                            "Graded"
+                                            "GRADED"
                                         ? graded
                                         : _filteredAssessments[index].status ==
-                                                "Ungraded"
+                                                "UNGRADED"
                                             ? ungraded
                                             : cancelled,
                                 stops: stops2,
@@ -191,8 +201,10 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                             splashColor: Colors.grey, // Splash color
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => QuizPage(
-                                    // Some parameter here?
+                                  builder: (context) => TakeAssessment(
+                                    authToken: authToken,
+                                    classId: _class,
+                                    assessID: assess[index].sId ?? '',
                                   )),
                             ),
                             child: Container(
@@ -215,8 +227,7 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                         padding:
                                             const EdgeInsets.only(left: 50.0),
                                         child: Text(
-                                          _filteredAssessments[index]
-                                              .assessmentName,
+                                          _filteredAssessments[index].assessmentName ?? '',
                                           style: TextStyle(
                                             color: Color(0xFF6096B4),
                                             fontSize: 16.0,
@@ -254,17 +265,15 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                       SizedBox(width: 45),
 
                                       _filteredAssessments[index].status ==
-                                              "Graded"
+                                              "GRADED"
                                           ? Text(
                                         _filteredAssessments[index]
-                                            .obtainedMarks.toInt()
-                                            .toString() +
+                                            .obtainedMarks.toString() +
                                             "/" +
                                             _filteredAssessments[index]
-                                                .totalMarks.toInt()
-                                                .toString(),
+                                                .totalMarks.toString(),
                                         style: TextStyle(
-                                          color: Color(0xFF6096B4),
+                                          color: Colors.white,
                                           fontSize: 19.0,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -274,15 +283,14 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                             child: Text(
                                               "/" +
                                               _filteredAssessments[index]
-                                                  .totalMarks.toInt()
-                                                  .toString(),
+                                                  .totalMarks.toString(),
                                         style: TextStyle(
                                             color: Color(0xFF6096B4),
                                             fontSize: 23.0,
                                             fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                          )
+                                      )
                                     ],
                                   ),
                                 ],
@@ -392,8 +400,8 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                 );
   }
 
-  List<AssessmentModel> get _filteredAssessments {
-    return assess.where((item) => item.status == dropdownValue).toList();
+  List<Assessments> get _filteredAssessments {
+    return assess.where((item) => item.status == dropdownValue.toUpperCase()).toList();
   }
 }
 

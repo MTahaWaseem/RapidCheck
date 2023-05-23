@@ -14,7 +14,7 @@ class ViewClassesProvider with ChangeNotifier {
   ClassModel classes = ClassModel();
   UserDetailsModel user = UserDetailsModel();
   CourseResponseModel courses = CourseResponseModel();
-  AddClassModel _class = AddClassModel();
+  AddClassModel classData = AddClassModel();
 
   getClassesData(String authToken,context) async {
     loading = true;
@@ -37,10 +37,10 @@ class ViewClassesProvider with ChangeNotifier {
     loading = false;
     notifyListeners();
   }
-  addClassData(String code, String className, String desc, String authToken,context) async {
+  addClassData(String code, String className, String desc, String authToken, context) async {
     loading = true;
     notifyListeners();
-    _class = await addClass(code, className, desc, authToken, context);
+    classData = await addClass(code, className, desc, authToken, context);
     loading = false;
     notifyListeners();
   }

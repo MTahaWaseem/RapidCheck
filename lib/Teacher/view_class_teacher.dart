@@ -186,8 +186,7 @@ class _ViewClassTeacherState extends State<ViewClassTeacher> {
                                         splashColor: Colors.blueGrey, // Splash color
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) => ViewStudents(
-                                                // Some parameter here?
+                                              builder: (context) => ViewStudents(classId: _class,
                                               )),
                                         ),
                                         child: Container(

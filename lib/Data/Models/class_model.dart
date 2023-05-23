@@ -60,7 +60,7 @@ class AddClassModel {
   AddClassModel({
     this.success = false,
     this.message = '',
-    Class? classData, // User? user,
+    Class? classData,
   }) : classData = classData ?? Class.empty();
 
   factory AddClassModel.fromJson(Map<String, dynamic> json) {

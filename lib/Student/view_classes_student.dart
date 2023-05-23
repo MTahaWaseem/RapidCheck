@@ -298,6 +298,7 @@ class _ViewClassesStudentState extends State<ViewClassesStudent> {
                       ),
                     ),
                   ),
+
                   Positioned(
                     top: 215,
                     left: w / 8,
@@ -330,11 +331,12 @@ class _ViewClassesStudentState extends State<ViewClassesStudent> {
                                             Radius.circular(20)),
                                         splashColor:
                                             Colors.blueGrey, // Splash color
-                                        onTap: () => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const ViewClassStudent()),
-                                        ),
+                                        onTap: () =>
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ViewClassStudent(authToken: authToken, classId: classes[index])),
+                                            ),
                                         child: Container(
                                           height: 80,
                                           child: Column(
