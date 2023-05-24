@@ -39,6 +39,10 @@ final List<Color> active = [
 class _ViewClassStudentState extends State<ViewClassStudent> {
 //Testing ListBuilder
   List<Assessments> assess = [];
+  int obtained = 0;
+  int available = 0;
+  int percent = 0;
+  String grade = 'A';
 
   @override
   void initState() {
@@ -46,6 +50,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
     Class _class = widget.classId;
     authToken = widget.authToken;
     loadAssessments(_class.id, authToken);
+
   }
 
   Future<void> loadAssessments(String classID, String authToken) async {
@@ -56,6 +61,28 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
       await myProvider.getAssessmentsData(classID, token, context);
     } catch (error) {
       print("Error in loading assessments");
+    }
+   // print(myProvider.assessments.assessments![0].status);
+
+    obtained = myProvider.assessments.totalObtainedMarks!;
+    available = myProvider.assessments.totalAvailableMarks!;
+    percent = ((obtained / available) * 100).round();
+    grade = getGrade(percent);
+
+
+  }
+
+  String getGrade(int percentage) {
+    if (percentage >= 90) {
+      return 'A';
+    } else if (percentage >= 80) {
+      return 'B';
+    } else if (percentage >= 70) {
+      return 'C';
+    } else if (percentage >= 60) {
+      return 'D';
+    } else {
+      return 'F';
     }
   }
 
@@ -150,20 +177,23 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                             children: [
                                               Column(
                                                 children: [
-                                                  SizedBox(height: 40),
-                                                  Text(
-                                                    "87%",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20),
+                                                  SizedBox(height: 25),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 20.0),
+                                                    child: Text(
+                                                      percent.toString() + '%',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 25),
+                                                    ),
                                                   ),
-                                                  SizedBox(height: 10),
+                                                  SizedBox(height: 20),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                            left: 10.0),
+                                                            left: 5.0),
                                                     child: Text(
                                                       "Score",
                                                       style: TextStyle(
@@ -179,9 +209,9 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.fromLTRB(
-                                                        8, 0, 0, 0),
+                                                        0, 0, 0, 0),
                                                 child: Text(
-                                                  "A",
+                                                  grade,
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
@@ -205,7 +235,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                     child: Ink(
                                       decoration: const BoxDecoration(
                                           //color: Color(0xFF6096B4),
-                                          color: Color(0xFF6096B4),
+                                          color: Color(0xFF962929),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(20))),
                                       child: InkWell(
@@ -216,8 +246,10 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const RegradeRequestsStudent(
-                                                      // Some parameter here?
+                                                  RegradeRequestsStudent(
+                                                    authToken: authToken,
+                                                    classId: _class,
+                                                    assess: assess
                                                       )),
                                         ),
                                         child: SizedBox(
@@ -266,9 +298,10 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ClassAnnouncements(
-                                                      // Some parameter here?
-                                                      )),
+                                                   ClassAnnouncements(
+                                                    authToken: authToken,
+                                                    classId: _class,
+                                                  )),
                                         ),
                                         child: SizedBox(
                                           width: w * 0.5,
@@ -395,7 +428,8 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                   builder: (context) => TakeAssessment(
                                     authToken: authToken,
                                     classId: _class,
-                                    assessID: assess[index].sId ?? '',
+                                    assessID: _filteredAssessments[index].sId ?? '',
+                                    duration: _filteredAssessments[index].duration ?? 120
                                   )),
                             ),
                             child: Container(
@@ -433,7 +467,7 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                   SizedBox(height: 16),
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      SizedBox(width: 30),
                                       Text(
                                         '101',
                                         style: TextStyle(
@@ -442,16 +476,13 @@ class _ViewClassStudentState extends State<ViewClassStudent> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(width: 38),
+                                      SizedBox(width: 47),
                                       Icon(
                                         Icons.timer_outlined,
                                         color: Color(0xFF6096B4),
                                       ),
                                       Text(
-                                        _filteredAssessments[index]
-                                                .duration
-                                                .toString() ??
-                                            '',
+                                        (_filteredAssessments[index].duration! ~/ 60).toString() + ' min',
                                         style: TextStyle(
                                           color: Color(0xFF6096B4),
                                           fontSize: 15.0,

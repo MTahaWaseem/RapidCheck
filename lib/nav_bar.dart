@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp/Data/Models/login_response_model.dart';
 import 'package:fyp/Teacher/view_classes_teacher.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fyp/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Student/notifications.dart';
 import 'Student/take_assessment.dart';
@@ -24,14 +25,14 @@ class _NavbarState extends State<Navbar> {
   static final List<Widget> _widgetOptionsTeacher = <Widget>[
 
     ViewClassesTeacher(),
-    ProfileScreen(),
+    SettingsPage(),
     const Notifications(),
     ProfileScreen(),
   ];
 
   static final List<Widget> _widgetOptionsStudent = <Widget>[
     ViewClassesStudent(),
-    ProfileScreen(),
+    SettingsPage(),
     const Notifications(),
     ProfileScreen(),
   ];

@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyp/Data/Models/get_announcements.dart';
+import 'package:fyp/Data/Models/get_assessments_model.dart';
 import 'package:http/http.dart' as http;
 import '../config.dart';
+import 'Models/get_student_answers_model.dart';
 
-Future<GetAnnouncementsModel> getAnnouncements(String classID, String authToken, context) async {
+Future<ResponseGraded> getGradedResponse(String assessID, String authToken, context) async {
 
-  GetAnnouncementsModel announcements = GetAnnouncementsModel();
+  ResponseGraded responses = ResponseGraded();
 
   try {
     Map<String, String> headers = {
@@ -17,17 +18,18 @@ Future<GetAnnouncementsModel> getAnnouncements(String classID, String authToken,
     };
 
     final response = await http.get(
-        Uri.parse("${URL}/api/classes/view-announcements/${classID}"),
+        Uri.parse("${URL}/api/assessments/view-assessment/${assessID}"),
         headers: headers
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final item = json.decode(response.body);
-      announcements = GetAnnouncementsModel.fromJson(item);
+      print("Before FromJSON");
+      responses = ResponseGraded.fromJson(item);
       print("After FromJSON");
     } else {
       print(response.body);
       Fluttertoast.showToast(
-          msg: "Error Fetching Announcements",
+          msg: "Error Fetching Assessments",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -38,6 +40,5 @@ Future<GetAnnouncementsModel> getAnnouncements(String classID, String authToken,
   } catch (e) {
     log("Catched! ", error: e);
   }
-
-  return announcements;
+  return responses;
 }

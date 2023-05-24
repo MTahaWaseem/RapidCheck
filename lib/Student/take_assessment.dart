@@ -10,18 +10,26 @@ class TakeAssessment extends StatefulWidget {
   final Class classId; // Add the classId parameter
   final String authToken;
   final String assessID;
+  final int duration;
 
   const TakeAssessment(
       {super.key,
       required this.classId,
       required this.authToken,
-      required this.assessID});
+      required this.assessID,
+      required this.duration});
 
   @override
   _TakeAssessmentState createState() => _TakeAssessmentState();
 }
 
 class _TakeAssessmentState extends State<TakeAssessment> {
+  Color _A = Colors.grey;
+  Color _B = Colors.grey;
+  Color _C = Colors.grey;
+  Color _D = Colors.grey;
+  Color _selected = Colors.lightGreen.shade600;
+
   int _timer = 62;
   int total_time = 62;
   late Timer _countdownTimer;
@@ -30,8 +38,8 @@ class _TakeAssessmentState extends State<TakeAssessment> {
   String _questionText = '';
   int _index = 1;
   int submit = 0;
-  TextEditingController textEditingController = TextEditingController(); // Controller for the text field
-
+  TextEditingController textEditingController =
+      TextEditingController(); // Controller for the text field
 
   String authToken = '';
   String assessID = '';
@@ -41,6 +49,8 @@ class _TakeAssessmentState extends State<TakeAssessment> {
   @override
   void initState() {
     super.initState();
+    _timer = widget.duration;
+    total_time = widget.duration;
 
     assessID = widget.assessID;
     authToken = widget.authToken;
@@ -84,6 +94,7 @@ class _TakeAssessmentState extends State<TakeAssessment> {
   void _goToQuestion(int questionNumber) {
     setState(() {
       _currentQuestion = questionNumber;
+      print("CQ: " + _currentQuestion.toString());
     });
   }
 
@@ -97,7 +108,6 @@ class _TakeAssessmentState extends State<TakeAssessment> {
 
   Color _progressColor = Colors.lightGreen.shade600;
   String myAnswer = '';
-
 
   void clearTextField() {
     setState(() {
@@ -251,13 +261,7 @@ class _TakeAssessmentState extends State<TakeAssessment> {
                                             children: [
                                               ElevatedButton(
                                                 child: Text('${index + 1}'),
-                                                onPressed: () {
-                                                  // _index = index;
-                                                  // print(index);
-                                                  // print(_index);
-                                                  // _goToQuestion(index + 1);
-                                                  // _changeQuestion(index);
-                                                },
+                                                onPressed: () {},
                                                 style: ElevatedButton.styleFrom(
                                                   primary: _currentQuestion ==
                                                           index + 1
@@ -324,39 +328,205 @@ class _TakeAssessmentState extends State<TakeAssessment> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Text(
-                                        //   'Title',
-                                        //   style: TextStyle(
-                                        //     fontWeight: FontWeight.bold,
-                                        //     fontSize: 16.0,
-                                        //   ),
-                                        // ),
                                         SizedBox(height: 8.0),
-
-                                        TextFormField(
-                                          controller: textEditingController,
-                                          maxLines: null, // Allows unlimited lines
-                                          minLines: 1, // Minimum of 1 line
-                                          decoration: InputDecoration(
-                                            hintText: 'Enter your response',
-                                            filled: true, // Set to true to fill background
-                                            fillColor: Color(0xFFF8F6F0), // Set background color to #DBE9FA
-                                            hintStyle: TextStyle(color: Colors.grey), // Set hint text color to black
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.grey), // Set border color to black
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.black), // Set border color to black
-                                            ),
-                                          ),
-                                          style: TextStyle(color: Colors.black),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              myAnswer = value; // Update the answer string on text field change
-                                            });
-                                          },
-                                        )
-
+                                        (myProvider
+                                                    .oneAssess
+                                                    .questions![
+                                                        _currentQuestion - 1]
+                                                    .questionType !=
+                                                'MCQ')
+                                            ? TextFormField(
+                                                controller:
+                                                    textEditingController,
+                                                maxLines:
+                                                    null, // Allows unlimited lines
+                                                minLines:
+                                                    1, // Minimum of 1 line
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                      'Enter your response',
+                                                  filled:
+                                                      true, // Set to true to fill background
+                                                  fillColor: Color(
+                                                      0xFFF8F6F0), // Set background color to #DBE9FA
+                                                  hintStyle: TextStyle(
+                                                      color: Colors
+                                                          .grey), // Set hint text color to black
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors
+                                                            .grey), // Set border color to black
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors
+                                                            .black), // Set border color to black
+                                                  ),
+                                                ),
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    myAnswer =
+                                                        value; // Update the answer string on text field change
+                                                  });
+                                                },
+                                              )
+                                            : Column(
+                                                children: [
+                                                  SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.05,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        primary: _A,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                      ),
+                                                      child: Text(myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][0]),
+                                                      onPressed: () {
+                                                        myAnswer = myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][0];
+                                                        setState(() {
+                                                          _D = Colors.grey;
+                                                          _B = Colors.grey;
+                                                          _C = Colors.grey;
+                                                          _A = Colors.lightGreen
+                                                              .shade600;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.05,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        primary: _B,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                      ),
+                                                      child: Text(myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][1]),
+                                                      onPressed: () {
+                                                        myAnswer = myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][1];
+                                                        setState(() {
+                                                          _A = Colors.grey;
+                                                          _D = Colors.grey;
+                                                          _C = Colors.grey;
+                                                          _B = Colors.lightGreen
+                                                              .shade600;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.05,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        primary: _C,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                      ),
+                                                      child: Text(myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][2]),
+                                                      onPressed: () {
+                                                        myAnswer = myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][2];
+                                                        setState(() {
+                                                          _A = Colors.grey;
+                                                          _B = Colors.grey;
+                                                          _D = Colors.grey;
+                                                          _C = Colors.lightGreen
+                                                              .shade600;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.05,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        primary: _D,
+                                                        //backgroundColor: _normal,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                      ),
+                                                      child: Text(myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][3]),
+                                                      onPressed: () {
+                                                        myAnswer = myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][3];
+                                                        setState(() {
+                                                          _A = Colors.grey;
+                                                          _B = Colors.grey;
+                                                          _C = Colors.grey;
+                                                          _D = Colors.lightGreen
+                                                              .shade600;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                       ],
                                     ),
                                   ),
@@ -374,32 +544,48 @@ class _TakeAssessmentState extends State<TakeAssessment> {
                         width: 200,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: (_currentQuestion == _totalQuestions) ? Color(0xFF6CB460) : Color(0xFF6096B4) ,
+                            backgroundColor:
+                                (_currentQuestion == _totalQuestions)
+                                    ? Color(0xFF6CB460)
+                                    : Color(0xFF6096B4),
                             foregroundColor: Colors.white,
                           ),
-                          child: (_currentQuestion == _totalQuestions) ? Text("SUBMIT") : Text("NEXT"),
+                          child: (_currentQuestion == _totalQuestions)
+                              ? Text("SUBMIT")
+                              : Text("NEXT"),
                           onPressed: () async {
 
+
                             print("Index: " + _index.toString());
-                            if (_currentQuestion != _totalQuestions){
+
+                            if (_currentQuestion != _totalQuestions) {
                               _goToQuestion(_index + 1);
                               _changeQuestion(_index);
+                              if (_index !=
+                                  myProvider.oneAssess.questions!.length - 1) {
+                                _index++;
+                              }
                             }
-                            print("After 2 methods " + _currentQuestion.toString());
                             setState(() {
                               Answer _myAnswer = Answer(
-                                  questionId: myProvider.oneAssess.questions![_currentQuestion-1].id,
-                                  answer: myAnswer
-                              );
-                              print("My answer is: " + _myAnswer.answer.toString());
+                                  questionId: myProvider.oneAssess
+                                      .questions![_currentQuestion - 1].id,
+                                  answer: myAnswer);
+                              print("My answer is: ${_myAnswer.answer}");
+
                               answers.add(_myAnswer);
-                              print("Inside SET STATE and submit is " + submit.toString() + _currentQuestion.toString());
                               clearTextField(); // Add the answer string to the list on button press
                             });
-                            if (submit == 1){
-                              await myProvider.submitAnswerData(assessID, total_time - _timer, answers, authToken, context);
+                            if (submit == 1) {
+                              await myProvider.submitAnswerData(
+                                  assessID,
+                                  total_time - _timer,
+                                  answers,
+                                  authToken,
+                                  context);
+                              Navigator.pop(context);
                             }
-                            if (_currentQuestion == _totalQuestions){
+                            if (_currentQuestion == _totalQuestions) {
                               submit = 1;
                             }
                           },

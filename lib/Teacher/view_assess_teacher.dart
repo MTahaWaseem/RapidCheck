@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Teacher/post_assessment.dart';
-
 import '../Data/Models/assessment_model.dart';
 import '../Data/Models/class_model.dart';
+import 'create_assessment.dart';
 
 class ViewAssessmentsTeacher extends StatefulWidget {
   final Class classId;
-  const ViewAssessmentsTeacher({Key? key,required this.classId}) : super(key: key);
+  final String authToken;
+
+  ViewAssessmentsTeacher({Key? key,required this.classId, required this.authToken}) : super(key: key);
   @override
   State<ViewAssessmentsTeacher> createState() => _ViewAssessmentsTeacherState();
 }
@@ -65,7 +66,8 @@ final List<Color> cancelled = [
 class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
   // Setting initial value for Dropdown
   String dropdownValue = 'Active';
-
+  String authToken = '';
+  String className = '';
 //Testing ListBuilder
   List<AssessmentModel> assess = [];
 
@@ -73,6 +75,8 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
   void initState() {
 
     Class _class = widget.classId;
+    className = widget.classId.className;
+    authToken = widget.authToken;
     super.initState();
     AssessmentModel result = new AssessmentModel();
     print(assess.length);
@@ -143,16 +147,18 @@ class _ViewAssessmentsTeacherState extends State<ViewAssessmentsTeacher> {
                                         borderRadius: BorderRadius.all(Radius.circular(20))),
                                     child: InkWell(
                                       borderRadius: BorderRadius.all(Radius.circular(20)),
-                                      splashColor: Colors.blueGrey, // Splash color
-                                      onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => PostAssessment(
-                                              // Some parameter here?
-                                            )),
-                                      ),// Some Dialog Box
+                                 splashColor: Colors.blueGrey, // Splash color
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                           builder: (context) => CreateAssessment(
+                                   authToken: authToken,
+                                      classId: _class.id,
+                                           className: className,
+                                          )),
+                                   ),// Some Dialog Box
                                       child: Container(
                                         width: 290,
-                                        height: 55,
+                                        height: 45,
                                         child: Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Row(

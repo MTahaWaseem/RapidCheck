@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Teacher/post_assessment.dart';
-
-import '../Data/Models/assessment_model.dart';
+import 'package:fyp/Student/view_class_student.dart';
+import 'package:fyp/Student/view_one_graded.dart';
+import '../Data/Models/class_model.dart';
+import '../Data/Models/get_assessments_model.dart';
 
 class RegradeRequestsStudent extends StatefulWidget {
-  const RegradeRequestsStudent({Key? key}) : super(key: key);
+
+  final Class classId; // Add the classId parameter
+  final String authToken;
+  final List<Assessments> assess;
+
+  const RegradeRequestsStudent(
+      {Key? key,
+        required this.classId,
+        required this.authToken,
+        required this.assess})
+      : super(key: key);
 
   @override
   State<RegradeRequestsStudent> createState() => _RegradeRequestsStudentState();
 }
 
-// For DropDown Container
-final Color background = Colors.white;
-final Color fill = Color(0xFF6096B4);
-final double fillPercent = 20;
-final double fillStop = (100 - fillPercent) / 100;
-final List<double> stops = [0.0, fillStop, fillStop, 1.0];
-final List<Color> gradient = [
-  background,
-  background,
-  fill,
-  fill,
-];
-
 // For Quizzes Container
-final Color background2 = Color(0xFF6EAACB);
-final Color fill2 = Color(0XFF6096B4);
+final Color background2 = Colors.white;
+final Color fill2 = Color(0xFF962929);
 final double fillPercent2 = 70;
 final double fillStop2 = (100 - fillPercent2) / 100;
 final List<double> stops2 = [0.0, fillStop2, fillStop2, 1.0];
@@ -37,8 +35,8 @@ final List<double> stops3 = [0.0, fillStop3, fillStop3, 1.0];
 
 
 final List<Color> marks = [
-  Color(0xff6096B4),
-  Color(0xff6096B4),
+Color(0xFF962929),
+Color(0xFF962929),
   fill2,
   fill2,
 ];
@@ -51,22 +49,22 @@ final List<Color> active = [
 ];
 
 
-
 class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
-//Testing ListBuilder
-  List<AssessmentModel> assess = [];
 
+  List<Assessments> assess = [];
   @override
   void initState() {
     super.initState();
-    AssessmentModel result = new AssessmentModel();
-    print(assess.length);
-    assess.add(result);
-    assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);assess.add(result);
+    authToken = widget.authToken;
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Class _class = widget.classId;
+    assess = widget.assess;
+
+
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -101,8 +99,8 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  MainText(w, "Taha Waseem"),
-                  SubText(w, h, "PHY-9055"),
+                  MainText(w, _class.className),
+                  SubText(w, h, _class.courseCode),
                   Stack(
                     children: [
                       Container(
@@ -125,8 +123,6 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
                               SizedBox(
                                 height: 30,
                               ),
-
-
                             ],
                           ),
                         ),
@@ -143,7 +139,7 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
             right: w / 8,
             bottom: 0,
             child: ListView.builder(
-                itemCount: assess.length,
+                itemCount: _filteredAssessments.length,
                 itemBuilder: (context, index) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,8 +160,15 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
                               BorderRadius.all(Radius.circular(20))),
                           child: InkWell(
                             splashColor: Colors.grey, // Splash color
-                            onTap: () => print(
-                                assess[index].totalMarks + index),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => ViewOneGraded(
+                                    authToken: authToken,
+                                    classId: _class,
+                                    assessID: _filteredAssessments[index].sId ?? '',
+                                    duration: assess[index].duration ?? 120,
+                                  )),
+                            ),
                             child: Container(
                               height: 80,
                               child: Column(
@@ -186,10 +189,9 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
                                         padding:
                                         const EdgeInsets.only(left: 50.0),
                                         child: Text(
-                                          assess[index]
-                                              .assessmentName,
+                                          _filteredAssessments[index].assessmentName ?? '',
                                           style: TextStyle(
-                                            color: Color(0xFF6096B4),
+                                            color: Colors.white,
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -209,49 +211,17 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(width: 38),
-                                      Icon(
-                                        Icons.timer_outlined,
-                                        color: Color(0xFF6096B4),
-                                      ),
-                                      Text(
-                                        '20 min',
-                                        style: TextStyle(
-                                          color: Color(0xFF6096B4),
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(width: 45),
-
-                                      assess[index].status ==
-                                          "Graded"
-                                          ? Text(
-                                        assess[index]
-                                            .obtainedMarks.toInt()
-                                            .toString() +
+                                      SizedBox(width: 150),
+                                     Text(
+                                       _filteredAssessments[index]
+                                            .obtainedMarks.toString() +
                                             "/" +
-                                            assess[index]
-                                                .totalMarks.toInt()
-                                                .toString(),
+                                           _filteredAssessments[index]
+                                                .totalMarks.toString(),
                                         style: TextStyle(
-                                          color: Color(0xFF6096B4),
+                                          color: Colors.white,
                                           fontSize: 19.0,
                                           fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                          : Padding(
-                                        padding: const EdgeInsets.only(left: 18.0),
-                                        child: Text(
-                                          "/" +
-                                              assess[index]
-                                                  .totalMarks.toInt()
-                                                  .toString(),
-                                          style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 23.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
                                         ),
                                       )
                                     ],
@@ -270,6 +240,12 @@ class _RegradeRequestsStudentState extends State<RegradeRequestsStudent> {
         ],
       ),
     );
+  }
+
+  List<Assessments> get _filteredAssessments {
+    return assess
+        .where((item) => item.status == 'REGRADE REQUESTED')
+        .toList();
   }
 
 

@@ -8,8 +8,9 @@ import '../Data/Models/class_model.dart';
 
 class ViewClassTeacher extends StatefulWidget {
   final Class classId; // Add the classId parameter
+  final String authToken;
 
-  const ViewClassTeacher({Key? key, required this.classId}) : super(key: key);
+  ViewClassTeacher({Key? key, required this.classId, required this.authToken}) : super(key: key);
 
   @override
   State<ViewClassTeacher> createState() => _ViewClassTeacherState();
@@ -20,18 +21,12 @@ class _ViewClassTeacherState extends State<ViewClassTeacher> {
 
 
   List<ClassModel> classes = [];
-
+  String authToken = '';
   @override
   void initState() {
-
     Class _class = widget.classId;
-
     super.initState();
-    ClassModel result = new ClassModel();
-    print(classes.length);
-    classes.add(result);
-    classes.add(result);
-    classes.add(result);
+    authToken = widget.authToken;
   }
 
   @override
@@ -98,7 +93,7 @@ class _ViewClassTeacherState extends State<ViewClassTeacher> {
                                     child: Ink(
                                       decoration: BoxDecoration(
                                         //color: Color(0xFF6096B4),
-                                          color: Color(0xFF6096B4),
+                                          color: Color(0xFF962929),
                                           borderRadius: BorderRadius.all(Radius.circular(20))),
                                       child: InkWell(
                                         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -144,7 +139,9 @@ class _ViewClassTeacherState extends State<ViewClassTeacher> {
                                         splashColor: Colors.blueGrey, // Splash color
                                         onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) => ViewAssessmentsTeacher(classId: _class
+                                              builder: (context) => ViewAssessmentsTeacher(
+                                                  authToken: authToken,
+                                                  classId: _class
                                               )),
                                         ),
                                         child: Container(
@@ -179,7 +176,7 @@ class _ViewClassTeacherState extends State<ViewClassTeacher> {
                                     child: Ink(
                                       decoration: BoxDecoration(
                                         //color: Color(0xFF6096B4),
-                                          color: Color(0xFF6096B4),
+                                          color: Color(0xFF6CB460),
                                           borderRadius: BorderRadius.all(Radius.circular(20))),
                                       child: InkWell(
                                         borderRadius: BorderRadius.all(Radius.circular(20)),

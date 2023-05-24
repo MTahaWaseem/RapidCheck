@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/Student/take_assessment.dart';
 import 'package:fyp/Student/view_class_student.dart';
+import 'package:fyp/Student/view_one_graded.dart';
 import '../Data/Models/class_model.dart';
 import '../Data/Models/get_assessments_model.dart';
 
@@ -10,7 +11,10 @@ class ViewAssessStudent extends StatefulWidget {
   final List<Assessments> assess;
 
   const ViewAssessStudent(
-      {Key? key, required this.classId, required this.authToken, required this.assess})
+      {Key? key,
+      required this.classId,
+      required this.authToken,
+      required this.assess})
       : super(key: key);
 
   @override
@@ -31,11 +35,12 @@ final List<Color> gradient = [
 ];
 
 // For Quizzes Container
-final Color background2 = Color(0xFFBDCDD6);
-final Color fill2 = Colors.white; // Active Quiz
+final Color background2 = Color(0xFFFFFFFF);
+final Color fill2 = Color(0xFF6096B4);  // Active Quiz
 final Color fill3 = Color(0xFF6096B4); // Ungraded
 final Color fill4 = Color(0xFF6CB460); // Graded
-final Color fill5 = Color(0xFF962929); // Cancelled
+final Color fill5 = Color(0xFFFF6666); // Expired
+final Color fill6 = Color(0xFFFF6666); // Expired
 final double fillPercent2 = 70; // fills 56.23% for container from bottom
 final double fillStop2 = (100 - fillPercent2) / 100;
 final List<double> stops2 = [0.0, fillStop2, fillStop2, 1.0];
@@ -47,14 +52,12 @@ final List<Color> active = [
   fill2,
 ];
 
-
 final List<Color> ungraded = [
   background2,
   background2,
   fill3,
   fill3,
 ];
-
 
 final List<Color> graded = [
   background2,
@@ -63,13 +66,19 @@ final List<Color> graded = [
   fill4,
 ];
 
+
 final List<Color> cancelled = [
   background2,
   background2,
   fill5,
   fill5,
 ];
-
+final List<Color> inactive = [
+  background2,
+  background2,
+  fill6,
+  fill6,
+];
 
 class _ViewAssessStudentState extends State<ViewAssessStudent> {
   // Setting initial value for Dropdown
@@ -77,15 +86,14 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
 
   String dropdownValue = 'Active';
 
-
   @override
   void initState() {
     super.initState();
-   }
+    authToken = widget.authToken;
+  }
 
   @override
   Widget build(BuildContext context) {
-
     assess = widget.assess;
     Class _class = widget.classId;
     print(assess.length);
@@ -99,7 +107,7 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
         child: AppBar(
           leading: const BackButton(color: Colors.black),
           shape:
-          const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+              const Border(bottom: BorderSide(color: Colors.black, width: 1)),
           //title: Text('Salam'),
           backgroundColor: const Color(0xFFD2721A),
         ),
@@ -125,8 +133,8 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  MainText(w, "Physics Evening"),
-                  SubText(w, h, "PHY-9055"),
+                  MainText(w, _class.className),
+                  SubText(w, h, _class.courseCode),
                   Stack(
                     children: [
                       Container(
@@ -185,12 +193,16 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                         "ACTIVE"
                                     ? active
                                     : _filteredAssessments[index].status ==
-                                            "GRADED"
-                                        ? graded
+                                            "INACTIVE"
+                                        ? inactive
                                         : _filteredAssessments[index].status ==
-                                                "UNGRADED"
-                                            ? ungraded
-                                            : cancelled,
+                                                "GRADED"
+                                            ? graded
+                                            : _filteredAssessments[index]
+                                                        .status ==
+                                                    "UNGRADED"
+                                                ? ungraded
+                                                : cancelled,
                                 stops: stops2,
                                 end: Alignment.centerRight,
                                 begin: Alignment.centerLeft,
@@ -201,11 +213,12 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                             splashColor: Colors.grey, // Splash color
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => TakeAssessment(
-                                    authToken: authToken,
-                                    classId: _class,
-                                    assessID: assess[index].sId ?? '',
-                                  )),
+                                  builder: (context) => ViewOneGraded(
+                                        authToken: authToken,
+                                        classId: _class,
+                                        assessID: _filteredAssessments[index].sId ?? '',
+                                    duration: assess[index].duration ?? 120,
+                                      )),
                             ),
                             child: Container(
                               height: 80,
@@ -227,9 +240,11 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                         padding:
                                             const EdgeInsets.only(left: 50.0),
                                         child: Text(
-                                          _filteredAssessments[index].assessmentName ?? '',
+                                          _filteredAssessments[index]
+                                                  .assessmentName ??
+                                              '',
                                           style: TextStyle(
-                                            color: Color(0xFF6096B4),
+                                            color: Colors.white,
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -240,57 +255,62 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                   SizedBox(height: 16),
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      SizedBox(width: 30),
                                       Text(
-                                        '9055',
+                                        _class.courseCode.substring(4, 7),
                                         style: TextStyle(
                                           color: Color(0xFF6096B4),
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(width: 38),
-                                      Icon(
-                                        Icons.timer_outlined,
-                                        color: Color(0xFF6096B4),
-                                      ),
+                                      SizedBox(width: 45),
+                                      Icon(Icons.timer_outlined,
+                                          color: Colors.white),
                                       Text(
-                                        '20 min',
+                                        (_filteredAssessments[index]
+                                                        .duration! ~/
+                                                    60)
+                                                .toString() +
+                                            ' min',
                                         style: TextStyle(
-                                          color: Color(0xFF6096B4),
+                                          color: Colors.white,
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       SizedBox(width: 45),
-
                                       _filteredAssessments[index].status ==
                                               "GRADED"
                                           ? Text(
-                                        _filteredAssessments[index]
-                                            .obtainedMarks.toString() +
-                                            "/" +
-                                            _filteredAssessments[index]
-                                                .totalMarks.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 19.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                          : Padding(
-                                            padding: const EdgeInsets.only(left: 18.0),
-                                            child: Text(
-                                              "/" +
                                               _filteredAssessments[index]
-                                                  .totalMarks.toString(),
-                                        style: TextStyle(
-                                            color: Color(0xFF6096B4),
-                                            fontSize: 23.0,
-                                            fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      )
+                                                      .obtainedMarks
+                                                      .toString() +
+                                                  "/" +
+                                                  _filteredAssessments[index]
+                                                      .totalMarks
+                                                      .toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 19.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 18.0),
+                                              child: Text(
+                                                "/" +
+                                                    _filteredAssessments[index]
+                                                        .totalMarks
+                                                        .toString(),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 23.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
                                     ],
                                   ),
                                 ],
@@ -309,99 +329,99 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
     );
   }
 
-  Material Dropdown(double w,) {
+  Material Dropdown(
+    double w,
+  ) {
     return Material(
-                              elevation: 3,
-                              shadowColor: Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: gradient,
-                                      stops: stops,
-                                      end: Alignment.centerRight,
-                                      begin: Alignment.centerLeft,
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: DropdownButton<String>(
-                                  value: dropdownValue,
-                                  icon: Padding(
-                                      padding: EdgeInsets.only(right: w / 20),
-                                      child:
-                                          Icon(Icons.arrow_downward_rounded)),
-                                  iconEnabledColor: Colors.white,
-                                  isExpanded: true,
-                                  iconSize: 24,
-                                  elevation: 16,
-                                  style: TextStyle(color: Colors.deepPurple),
-                                  underline: Container(),
-                                  onChanged: (String? newValue) {
-                                    if (newValue != null) {
-                                      setState(() {
-                                        dropdownValue = newValue;
-                                      });
-                                    }
-                                  },
-                                  items: <String>[
-                                    'Active',
-                                    'Inactive',
-                                    'Graded',
-                                    'Ungraded',
-                                    'Expired',
-                                    'Regrade Requested'
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 30),
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            color: Color(0xFF737373),
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
+      elevation: 3,
+      shadowColor: Colors.grey,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: gradient,
+              stops: stops,
+              end: Alignment.centerRight,
+              begin: Alignment.centerLeft,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: DropdownButton<String>(
+          value: dropdownValue,
+          icon: Padding(
+              padding: EdgeInsets.only(right: w / 20),
+              child: Icon(Icons.arrow_downward_rounded)),
+          iconEnabledColor: Colors.white,
+          isExpanded: true,
+          iconSize: 24,
+          elevation: 16,
+          style: TextStyle(color: Colors.deepPurple),
+          underline: Container(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                dropdownValue = newValue;
+              });
+            }
+          },
+          items: <String>[
+            'Active',
+            'Inactive',
+            'Graded',
+            'Ungraded',
+            'Expired',
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 30),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: Color(0xFF737373),
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 
   Padding SubText(double w, double h, String text) {
     return Padding(
-                  padding: EdgeInsets.fromLTRB(w / 16, h / 128, 0, h / 32),
-                  child: Text(text,
-                    style: TextStyle(
-                      color: Color(0xFF6096B4),
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
+      padding: EdgeInsets.fromLTRB(w / 16, h / 128, 0, h / 32),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Color(0xFF6096B4),
+          fontSize: 15.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   Padding MainText(double w, String text) {
     return Padding(
-                  padding: EdgeInsets.fromLTRB(w / 16, 0, 0, 0),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: Color(0xFF737373),
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
+      padding: EdgeInsets.fromLTRB(w / 16, 0, 0, 0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Color(0xFF737373),
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   List<Assessments> get _filteredAssessments {
-    return assess.where((item) => item.status == dropdownValue.toUpperCase()).toList();
+    return assess
+        .where((item) => item.status == dropdownValue.toUpperCase())
+        .toList();
   }
 }
 

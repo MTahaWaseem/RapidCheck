@@ -16,7 +16,7 @@ Future<GetAssessModel> getAssessments(String classID, String authToken, context)
       'Authorization': 'Bearer $authToken',
       'Content-Type': 'application/json',
     };
-//http://api.rapidcheck.babusar.cloud/api/assessments?classId=646b342aceb2945fda84f51a
+
     final response = await http.get(
         Uri.parse("${URL}/api/assessments?classId=${classID}"),
         headers: headers

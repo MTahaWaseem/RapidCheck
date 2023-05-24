@@ -1,33 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/Teacher/post_announcement.dart';
+import 'package:fyp/Controllers/announcements_provider.dart';
+import 'package:provider/provider.dart';
 import '../Data/Models/class_model.dart';
+import '../Data/Models/get_announcements.dart';
 
 class ClassAnnouncements extends StatefulWidget {
-  const ClassAnnouncements({Key? key}) : super(key: key);
+  final Class classId; // Add the classId parameter
+  final String authToken;
+  const ClassAnnouncements(
+      {Key? key, required this.classId, required this.authToken})
+      : super(key: key);
 
   @override
   State<ClassAnnouncements> createState() => _ClassAnnouncementsState();
 }
 
 class _ClassAnnouncementsState extends State<ClassAnnouncements> {
-//Testing ListBuilder
-  List<ClassModel> classes = [];
-  String dropdownValue = 'Active';
+
+  List<Announcements> announce = [];
 
   @override
   void initState() {
     super.initState();
-    ClassModel result = new ClassModel();
-    print(classes.length);
-    classes.add(result);
-    classes.add(result);
-    classes.add(result);
+
+    Class _class = widget.classId;
+    String authToken = widget.authToken;
+    loadData(_class.id, authToken);
+  }
+
+  Future<void> loadData(String classID, String authToken) async {
+    final myProvider =
+    Provider.of<AnnouncementsProvider>(context, listen: false);
+    try {
+      String token = authToken;
+      await myProvider.getAnnouncementsData(classID, token, context);
+    } catch (error) {
+      print("Error in loading announcements");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Class _class = widget.classId;
+    final myProvider = Provider.of<AnnouncementsProvider>(context);
+    announce = myProvider.announcements.announcements ?? [];
+
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
@@ -63,14 +84,14 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
                   SizedBox(
                     height: h / 25,
                   ),
-                  MainText(w, "Physics Evening"),
+                  MainText(w, _class.className),
                   SizedBox(height: 10),
-                  SubText(w, "PHY-012"),
+                  SubText(w, _class.courseCode),
                   SizedBox(height: 20),
                   Stack(
                     children: [
                       Container(
-                          height: classes.length < 3 ? 400 : 585,
+                          height: announce.length < 3 ? 400 : 585,
                           color: Color(0xFFF4F4F4)),
 
                       Positioned(
@@ -101,7 +122,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
             right: w / 8,
             bottom: 0,
             child: ListView.builder(
-                itemCount: classes.length,
+                itemCount: announce.length,
                 itemBuilder: (context, index) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +142,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
                               children: [
                                 SizedBox(height: 13),
                                 Text(
-                                  'Update Title',
+                                  announce[index].title ?? '',
                                   style: TextStyle(
                                     color: Color(0xFF6096B4),
                                     fontSize: 16.0,
@@ -130,14 +151,13 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
                                 ),
                                 SizedBox(height: 7),
                                 Text(
-                                  'Update description will come here perhaps lots of text',
+                                  announce[index].description ?? '',
                                   style: TextStyle(
                                     color: Color(0xFF6096B4),
                                     fontSize: 12.0,
                                     //fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                               ],
                             ),
                           ),

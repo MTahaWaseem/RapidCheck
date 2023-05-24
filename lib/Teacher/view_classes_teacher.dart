@@ -482,7 +482,8 @@ class _ViewClassesTeacherState extends State<ViewClassesTeacher> {
                                               Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ViewClassTeacher(classId: classes[index])),
+                                                    ViewClassTeacher(classId: classes[index], authToken: authToken),
+                                            ),
                                           ),
                                           child: Container(
                                             height: 80,

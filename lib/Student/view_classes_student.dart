@@ -142,157 +142,9 @@ class _ViewClassesStudentState extends State<ViewClassesStudent> {
                             ),
                             MainText(w, "My Classes"),
                             SizedBox(height: 25),
-                            Stack(
-                              children: [
-                                Container(
-                                    height: classes.length < 3 ? 400 : 585,
-                                    color: Color(0xFFF4F4F4)),
-                                Positioned(
-                                  left: 160,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 22, 20, 0),
-                                    child: SizedBox(
-                                      width: 135,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shadowColor: Colors.grey,
-                                          elevation: 5,
-                                          primary: Color(0xFF6096B4),
-                                        ),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: const Text(
-                                                "Enter Class Code",
-                                                style: TextStyle(
-                                                  color: Color(0xFF6096B4),
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              content: Material(
-                                                elevation: 5,
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                child: SizedBox(
-                                                  height: 55,
-                                                  child: TextField(
-                                                    style: const TextStyle(
-                                                      color: Color(0xFF6096B4),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    decoration: InputDecoration(
-                                                      filled: true,
-                                                      fillColor: Colors.white,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                      enabledBorder:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          8, 0, 8, 8),
-                                                  child: TextButton(
-                                                    onPressed: () {
-                                                      // ClassModel result = ClassModel();
-                                                      // classes.add(result);
-                                                      // setState(() {
-                                                      // });
-                                                      //-------------------------------------------
-
-                                                      // Method Call to add course name
-                                                      Navigator.of(ctx).pop();
-                                                    },
-                                                    child: Material(
-                                                      elevation: 5,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                      child: Container(
-                                                        width: 100,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(14),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color:
-                                                              Color(0xFF6096B4),
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: const Align(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                            "Add",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 15.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        child: Row(
-                                          children: const [
-                                            Icon(Icons.add),
-                                            SizedBox(width: 20),
-                                            Text(
-                                              'Class',
-                                              style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            Container(
+                                height: classes.length < 3 ? 400 : 585,
+                                color: Color(0xFFF4F4F4)),
                           ],
                         ),
                       ),
@@ -300,7 +152,7 @@ class _ViewClassesStudentState extends State<ViewClassesStudent> {
                   ),
 
                   Positioned(
-                    top: 215,
+                    top: h * 0.175,
                     left: w / 8,
                     right: w / 8,
                     bottom: 0,
