@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:fyp/Data/create_assessment.dart';
 import '../Data/Models/create_assessment_response_model.dart';
-import '../Data/Models/questions_create.dart';
+import '../Data/Models/create_assessment_model.dart';
 
 class CreateAssessmentProvider with ChangeNotifier {
   CreateAssessment assessmentResponse = CreateAssessment();

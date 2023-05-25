@@ -401,6 +401,8 @@ class _TakeAssessmentState extends State<TakeAssessment> {
                                                             Colors.white,
                                                       ),
                                                       child: Text(myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][0]),
+                                                      //       child: Text(myProvider.gradedResponse.questions![_currentQuestion-1].msAnswer[0][0]), //oneAssess.questions![_currentQuestion-1].msAnswer[0][0]),
+                                                      //
                                                       onPressed: () {
                                                         myAnswer = myProvider.oneAssess.questions![_currentQuestion-1].msAnswer[0][0];
                                                         setState(() {

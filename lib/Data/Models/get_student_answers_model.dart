@@ -87,29 +87,40 @@ class Assessment {
 }
 
 class Questions {
-  String? id;
-  String? questionType;
-  String? question;
-  int? totalMarks;
-  List<List<String>>? msAnswer;
-  int? iV;
+  String id;
+  String questionType;
+  String question;
+  int totalMarks;
+  List<List<String>> msAnswer;
+  int iV;
 
   Questions(
-      {  this.id,
-        this.questionType,
-        this.question,
-        this.totalMarks,
-        this.msAnswer,
-        this.iV});
+      {  required this.id,
+        required this.questionType,
+        required this.question,
+        required this.totalMarks,
+        required this.msAnswer,
+        required this.iV});
 
-  Questions.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    questionType = json['questionType'];
-    question = json['question'];
-    totalMarks = json['totalMarks'];
-    List<List<String>>.from(json["msAnswer"].map((x) => List<String>.from(x)));
-    iV = json['__v'];
+  factory Questions.fromJson(Map<String, dynamic> json) {
+    return Questions(
+      iV: json['__v'],
+      id: json["_id"],
+      questionType: json["questionType"],
+      question: json["question"],
+      totalMarks: json["totalMarks"],
+      msAnswer: List<List<String>>.from(json["msAnswer"].map((x) => List<String>.from(x))),
+    );
   }
+
+  // factory Questions.fromJson(Map<String, dynamic> json) {
+  //   id = json['_id'];
+  //   questionType = json['questionType'];
+  //   question = json['question'];
+  //   totalMarks = json['totalMarks'];
+  //   List<List<String>>.from(json["msAnswer"].map((x) => List<String>.from(x)));
+  //   iV = json['__v'];
+  // }
 
 }
 

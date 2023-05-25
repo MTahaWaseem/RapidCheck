@@ -211,15 +211,31 @@ class _ViewAssessStudentState extends State<ViewAssessStudent> {
                                   BorderRadius.all(Radius.circular(20))),
                           child: InkWell(
                             splashColor: Colors.grey, // Splash color
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => ViewOneGraded(
+                            onTap: (){
+                              if (_filteredAssessments[index].status ==
+                                  "ACTIVE"){
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => TakeAssessment(
+                                          authToken: authToken,
+                                          classId: _class,
+                                          assessID: _filteredAssessments[index].sId ?? '',
+                                          duration: _filteredAssessments[index].duration ?? 120
+                                      )),
+                                );
+                              }else if (_filteredAssessments[index].status ==
+                                  "GRADED"){
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ViewOneGraded(
                                         authToken: authToken,
                                         classId: _class,
                                         assessID: _filteredAssessments[index].sId ?? '',
-                                    duration: assess[index].duration ?? 120,
+                                        duration: assess[index].duration ?? 120,
                                       )),
-                            ),
+                                );
+                              }
+                            },
                             child: Container(
                               height: 80,
                               child: Column(

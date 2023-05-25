@@ -9,6 +9,7 @@ class GradedProvider with ChangeNotifier {
 
   getGradedAssessmentsData(String assessID, String authToken, context) async {
     loading = true;
+    notifyListeners();
     gradedResponse = await getGradedResponse(assessID, authToken, context);
     loading = false;
     notifyListeners();
